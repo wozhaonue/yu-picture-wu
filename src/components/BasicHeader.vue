@@ -14,7 +14,12 @@
     </a-col>
     <a-col flex="100px">
       <div class="login-place">
+       <div v-if="loginUserStore.loginUser.id">
+          {{ loginUserStore.loginUser.userName || '无名'}}
+       </div>
+       <div v-else>
         <a-button type="primary" href="/user/login">登录</a-button>
+       </div>
       </div>
     </a-col>
   </a-row>
@@ -26,8 +31,11 @@ import { h, ref } from 'vue'
 import { HomeOutlined } from '@ant-design/icons-vue'
 import type { MenuProps } from 'ant-design-vue'
 import { useRouter } from "vue-router";
-
-
+//引入登录状态
+import { useLoginUserStore } from '@/stores/user';
+const loginUserStore = useLoginUserStore();
+//远程获取登录状态
+loginUserStore.getLoginUser();
 const items = ref<MenuProps['items']>([
   {
     key: '/',

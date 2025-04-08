@@ -4,7 +4,7 @@
     <a-col flex="200px">
      <router-link to="/">
       <div class="title-bar">
-        <img src="@/assets//favicon.ico" alt="网站logo">
+        <img src="@images/favicon.ico" alt="网站logo">
         <span class="title">智能协同云图库</span>
       </div>
      </router-link>
@@ -49,7 +49,7 @@ const items = ref<MenuProps['items']>([
     title: '关于',
   },
   {
-    key: 'others',
+    key: '/others',
     label: h('a', { href: 'https://www.codefather.cn', target: '_blank' }, '编程导航'),
     title: '编程导航',
   },

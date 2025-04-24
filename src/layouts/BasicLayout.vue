@@ -32,10 +32,11 @@ import BasicHeader from '@/components/BasicHeader.vue';
 }
 #basicLayout .header {
   background-color: #fff;
+  margin-bottom: 16px;
 }
 #basicLayout .content {
   background: linear-gradient(to right, #fefefe, #fff);
   padding: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 28px;
 }
 </style>

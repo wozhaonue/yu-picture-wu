@@ -15,7 +15,24 @@
     <a-col flex="100px">
       <div class="login-place">
        <div v-if="loginUserStore.loginUser.id">
-          {{ loginUserStore.loginUser.userName || '无名'}}
+       <a-dropdown>
+    <a class="ant-dropdown-link" @click.prevent>
+      <a-space>
+        <a-avatar :size="40" :src="loginUserStore.loginUser.userAvatar"/>
+          {{ loginUserStore.loginUser.userName ?? '无名'}}
+       </a-space>
+      <DownOutlined />
+    </a>
+    <template #overlay>
+      <a-menu>
+        <a-menu-item>
+         <a-space>
+          <LogoutOutlined /><a @click="doLoginOut">退出登录</a>
+         </a-space>
+        </a-menu-item>
+      </a-menu>
+    </template>
+  </a-dropdown>
        </div>
        <div v-else>
         <a-button type="primary" href="/user/login">登录</a-button>
@@ -28,11 +45,12 @@
 
 <script lang="ts" setup>
 import { h, ref } from 'vue'
-import { HomeOutlined } from '@ant-design/icons-vue'
-import type { MenuProps } from 'ant-design-vue'
+import { HomeOutlined, LogoutOutlined } from '@ant-design/icons-vue'
+import { message, type MenuProps } from 'ant-design-vue'
 import { useRouter } from "vue-router";
 //引入登录状态
 import { useLoginUserStore } from '@/stores/user';
+import { userLogoutUsingPost } from '@/api/userController';
 const loginUserStore = useLoginUserStore();
 //远程获取登录状态
 loginUserStore.getLoginUser();
@@ -67,6 +85,19 @@ const current = ref<string[]>([])
 router.afterEach( to => {
   current.value = [to.path];
 })
+//退出登录
+const doLoginOut = async() => {
+  const res = await userLogoutUsingPost();
+  if(res.data.code === 0){
+    loginUserStore.setLoginUser({
+      userName: '未登录',
+    })
+    message.success('退出登录成功');
+    router.replace('/user/login');
+  } else {
+    message.error('退出登录失败,' + res.data.message);
+  }
+}
 </script>
 <style scoped>
 #basicHeader img {

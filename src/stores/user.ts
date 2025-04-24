@@ -1,13 +1,18 @@
-import {defineStore} from 'pinia'
-import { ref } from 'vue'
+import { getLoginUserUsingGet } from '@/api/userController';
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
 export const useLoginUserStore = defineStore('loginUser', () => {
-  const loginUser =  ref<any>({
-    userNam: '未登录',
+  const loginUser =  ref<API.LoginUserVO>({
+    userName: '未登录',
   })
   //getters 获取登录状态
   async function getLoginUser() {
-    // return loginUser.value
+    //远程请求获取登录状态
+    const res = await getLoginUserUsingGet();
+    if(res.data.code === 0 && res.data.data){
+      loginUser.value = res.data.data;
+    }
   }
   //setters 设置登录状态
   async function setLoginUser(user: any) {

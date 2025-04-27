@@ -38,6 +38,11 @@ myAxios.interceptors.response.use(
     return response
   },
   function (error) {
+    console.log(error.code);
+    const errorCode = error.code || '';
+    if(errorCode === 'ERR_NETWORK'){
+      message.error('网络连接失败，请检查网络连接');
+    }
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
     return Promise.reject(error)

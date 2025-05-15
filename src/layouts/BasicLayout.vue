@@ -3,7 +3,9 @@
     <a-layout style="min-height: 100vh;">
       <a-layout-header class="header"><BasicHeader></BasicHeader></a-layout-header>
       <a-layout-content class="content">
+         <a-config-provider :locale="zhCN">
         <router-view></router-view>
+         </a-config-provider>
       </a-layout-content>
       <a-layout-footer class="footer">
         <a href="https://www.codefather.cn/" target="_blank" rel="noopener noreferrer">
@@ -16,6 +18,7 @@
 
 <script setup lang="ts">
 import BasicHeader from '@/components/BasicHeader.vue';
+import zhCN from 'ant-design-vue/es/locale/zh_CN';
 </script>
 
 <style scoped>

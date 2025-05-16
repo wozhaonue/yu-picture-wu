@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts" setup>
-import { h, ref } from 'vue'
+import { computed, h, ref } from 'vue'
 import { HomeOutlined, LogoutOutlined } from '@ant-design/icons-vue'
 import { message, type MenuProps } from 'ant-design-vue'
 import { useRouter } from "vue-router";
@@ -54,8 +54,9 @@ import { userLogoutUsingPost } from '@/api/userController';
 const loginUserStore = useLoginUserStore();
 //远程获取登录状态
 loginUserStore.getLoginUser();
-const items = ref<MenuProps['items']>([
-  {
+// 原始菜单项
+const originalItems = [
+   {
     key: '/',
     icon: () => h(HomeOutlined),
     label: '主页',
@@ -71,7 +72,24 @@ const items = ref<MenuProps['items']>([
     label: h('a', { href: 'https://www.codefather.cn', target: '_blank' }, '编程导航'),
     title: '编程导航',
   },
-])
+]
+// 定义一个过滤菜单项的函数
+const filterMenuItems = (menuItems = [] as MenuProps['items']) => {
+  return menuItems?.filter(item => {
+    if (item?.key.startsWith('/admin')) {
+      const loginUserStore = useLoginUserStore();
+      const loginUser = loginUserStore.loginUser;
+      if(!loginUser || loginUser.userRole !== 'admin'){
+      return false;
+      }
+    }
+    return true;
+})
+}
+
+const items = computed<MenuProps['items']>(() => {
+  return filterMenuItems(originalItems);
+})
 
 const router = useRouter();
 // 路由跳转事件

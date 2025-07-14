@@ -3,6 +3,7 @@ import HomePage from '@/pages/HomePage.vue'
 import UserLoginPage from '@/pages/user/UserLoginPage.vue'
 import UserRegisterPage from '@/pages/user/UserRegisterPage.vue'
 import AdminUserManagePage from '@/pages/admin/AdminUserManagePage.vue'
+import UserProfilePage from '@/pages/user/UserProfilePage.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -26,6 +27,11 @@ const router = createRouter({
       name: 'userManage',
       component: AdminUserManagePage,
     },
+    {
+      path: '/user/profile',
+      name: 'profile',
+      component: UserProfilePage,
+    }
   ],
 })
 

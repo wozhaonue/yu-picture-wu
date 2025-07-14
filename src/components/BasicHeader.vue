@@ -27,6 +27,11 @@
       <a-menu>
         <a-menu-item>
          <a-space>
+          <AuditOutlined /><a @click="goToProfile">个人中心</a>
+         </a-space>
+        </a-menu-item>
+         <a-menu-item>
+         <a-space>
           <LogoutOutlined /><a @click="doLoginOut">退出登录</a>
          </a-space>
         </a-menu-item>
@@ -45,7 +50,7 @@
 
 <script lang="ts" setup>
 import { computed, h, ref } from 'vue'
-import { HomeOutlined, LogoutOutlined } from '@ant-design/icons-vue'
+import { HomeOutlined, LogoutOutlined, AuditOutlined } from '@ant-design/icons-vue'
 import { message, type MenuProps } from 'ant-design-vue'
 import { useRouter } from "vue-router";
 //引入登录状态
@@ -115,6 +120,12 @@ const doLoginOut = async() => {
   } else {
     message.error('退出登录失败,' + res.data.message);
   }
+}
+//个人中心
+const goToProfile = () => {
+  router.push({
+    path: '/user/profile',
+  });
 }
 </script>
 <style scoped>

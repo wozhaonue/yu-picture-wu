@@ -16,6 +16,7 @@
       :data-source="dataList"
       :pagination="pagination"
       @change="doTableChange"
+      bordered>
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'userAvatar'">
@@ -28,7 +29,7 @@
         <template v-else-if="column.dataIndex === 'createTime'">
           {{ dayjs(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
-        <template v-else-if="column.key === 'action'">
+        <template v-else-if="column.key === 'action1'">
           <a-popconfirm
             title="你是否要删除"
             ok-text="是"
@@ -38,6 +39,10 @@
           >
             <a-button type="link">删除</a-button>
           </a-popconfirm>
+
+        </template>
+        <template v-else-if="column.key === 'action2'">
+          <a-button type="link">编辑</a-button>
         </template>
       </template>
     </a-table>
@@ -75,8 +80,12 @@ const columns = [
     dataIndex: 'createTime',
   },
   {
-    title: '操作',
-    key: 'action',
+    title: '操作1',
+    key: 'action1',
+  },
+   {
+    title: '操作2',
+    key: 'action2',
   },
 ]
 // 定义数据

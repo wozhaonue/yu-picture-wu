@@ -22,6 +22,13 @@ router.beforeEach(async(to, from, next) => {
       return;
   }
 }
+  if(toURl.startsWith('/user/profile')){ //如果是个人信息页面，则需要登录
+    if(!loginUser.id){
+      message.error('没有权限访问该页面');
+      next('/user/login');
+      return;
+  }
+}
 // 其他页面则直接放行
 next();
 })

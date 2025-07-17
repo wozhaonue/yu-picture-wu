@@ -19,7 +19,7 @@ import { message } from 'ant-design-vue';
 import { onMounted, reactive } from 'vue';
 
 const loginStore = useLoginUserStore();
-  const loginUser = loginStore.loginUser;
+const loginUser = loginStore.loginUser;
 const personData = reactive<API.UserVO>({
   // userAvatar: "https://www.codefather.cn/logo.png",
   userName: "无名",

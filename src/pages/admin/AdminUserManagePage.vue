@@ -42,18 +42,41 @@
 
         </template>
         <template v-else-if="column.key === 'action2'">
-          <a-button type="link">编辑</a-button>
+            <a-button @click="showModal(record)" type="link">编辑</a-button>
         </template>
       </template>
     </a-table>
+    <a-modal v-model:open="open" title="编辑窗口" :confirm-loading="confirmLoading" @ok="handleOk" okText="保存">
+              <a-form :model="editForm" layout="vertical">
+                <a-form-item label="ID">
+                  <a-input :defaultValue="editForm.id" disabled></a-input>
+                </a-form-item>
+                <a-form-item label="用户名">
+                  <a-input :defaultValue="editForm.userName"  v-model:value="editForm.userName"></a-input>
+                </a-form-item>
+                 <a-form-item label="简介">
+                  <a-input :defaultValue="editForm.userProfile"  v-model:value="editForm.userProfile"></a-input>
+                </a-form-item>
+                <a-form-item label="用户角色">
+                  <a-select :defaultValue="editForm.userRole"  v-model:value="editForm.userRole">
+                    <a-select-option value="admin">管理员</a-select-option>
+                    <a-select-option value="user">普通用户</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-form>
+      </a-modal>
   </div>
 </template>
 <script lang="ts" setup>
-import { deleteUserUsingPost, listUserVoByPageUsingPost } from '@/api/userController'
+import { deleteUserUsingPost, listUserVoByPageUsingPost, updateUserUsingPost } from '@/api/userController'
+import { useLoginUserStore } from '@/stores/user';
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
 import { computed, onMounted, reactive, ref } from 'vue'
-
+const loginStore = useLoginUserStore();
+const loginUser = loginStore.loginUser;
+const open = ref<boolean>(false);
+const confirmLoading = ref<boolean>(false);
 const columns = [
   {
     title: 'id',
@@ -141,7 +164,14 @@ const confirm = async ( id: number) => {
   if(!id){
     return
   }
+   // 如果删除的对象是自身，则拒绝删除 -- 需要在请求之前进行判断
+  if(id === loginUser.id){
+    message.error('您不能删除自己');
+    console.error('您不能删除自己');
+    return;
+  }
   const res = await deleteUserUsingPost({id});
+
   if(res.data.code === 0) {
     fetchData(); // 刷新数据
     message.success('删除用户成功');
@@ -155,6 +185,60 @@ const confirm = async ( id: number) => {
 const cancel = () => {
   console.log("取消删除用户数据操作");
 };
+
+// 编辑表单的双向绑定数据
+const editForm = reactive<API.UserUpdateRequest>({
+  id: 0,
+  userProfile: '',
+  userName: '',
+  userRole: 'user',
+})
+// 编辑用户操作
+const showModal = (record: API.UserVO) => {
+  // 如果id不存在，则直接不打开编辑对话框
+  open.value = true;
+  if(!record){
+    message.error("该行不存在record");
+    console.error("该行不存在record");
+    return;
+  }
+  editForm.id = record.id;
+  editForm.userProfile = record.userProfile;
+  editForm.userName = record.userName;
+  editForm.userRole = record.userRole;
+}
+
+const handleOk = async() => {
+  confirmLoading.value = true;
+  // 将表单中的信息获取并提交到后端
+  const editData: API.UserUpdateRequest = {
+    id: editForm.id,
+    userName: editForm.userName,
+    userProfile: editForm.userProfile,
+    userRole: editForm.userRole,
+  }
+  console.log(editData);
+  // 如果修改的用户信息为自身，且修改了角色权限，则拒绝修改
+  if(editData.id === loginUser.id && editData.userRole !== loginUser.userRole){
+    message.error('您不能修改自己的角色权限');
+    console.error('您不能修改自己的角色权限');
+    open.value = false;
+   confirmLoading.value = false;
+    return;
+  }
+  const res = await updateUserUsingPost(editData);
+  if(res.data.code === 0) {
+    message.success('修改成功');
+    // 修改成功需要刷新数据
+    fetchData();
+    console.log('修改成功', res.data.data);
+  }else{
+    message.error(res.data.message?? '修改失败');
+    console.error('修改失败', res.data.message);
+  }
+  open.value = false;
+  confirmLoading.value = false;
+}
 onMounted(() => {
   fetchData()
 })
@@ -167,5 +251,8 @@ onMounted(() => {
 }
 #admin-user-page .search-form {
   margin-bottom: 16px;
+}
+#admin-user-page .search-form .ant-form-inline .ant-form-item {
+   margin-bottom: 16px; /* 根据需要调整此值 */
 }
 </style>

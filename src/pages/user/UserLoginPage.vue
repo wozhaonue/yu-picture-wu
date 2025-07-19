@@ -10,7 +10,7 @@
     <a-form-item
       name="userAccount"
       :rules="[{required: true, message: '该项必填', trigger: ['change', 'blur']}]"
-     
+
     >
       <a-input v-model:value="formState.userAccount"  placeholder="请输入账号" />
     </a-form-item>
@@ -32,7 +32,7 @@
     message: '必须包含大小写字母、数字和其他字符',
     trigger: ['change', 'blur']
   }]"
-     
+
     >
       <a-input-password v-model:value="formState.userPassword"  placeholder="请输入密码" />
     </a-form-item>
@@ -50,12 +50,13 @@ import { reactive } from 'vue';
 import { userLoginUsingPost } from '@/api/userController';
 import { useLoginUserStore } from '@/stores/user';
 import { message } from 'ant-design-vue';
-import { useRouter } from 'vue-router';
+import { useRouter,useRoute } from 'vue-router';
 const formState = reactive<API.UserLoginRequest>({
   userAccount: '',
   userPassword: '',
 });
 const router = useRouter();
+const route = useRoute();
 //全局登录态
 const userLogin = useLoginUserStore();
 //远程登录请求
@@ -64,6 +65,12 @@ const dologinRequest = async(values: API.UserLoginRequest) => {
   if(res.data.code === 0 && res.data.data){
     await userLogin.getLoginUser();
     message.success('登录成功');
+    // 判断路径中是否存在重定向的redirect参数
+    const redirect = route.query.redirect as string;
+    if(redirect){
+      router.replace(redirect);
+      return;
+    }
     router.replace('/');
   }else{
     message.error('登录失败，'+res.data.message);

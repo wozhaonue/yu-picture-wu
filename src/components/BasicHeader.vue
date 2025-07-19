@@ -52,13 +52,16 @@
 import { computed, h, ref } from 'vue'
 import { HomeOutlined, LogoutOutlined, AuditOutlined } from '@ant-design/icons-vue'
 import { message, type MenuProps } from 'ant-design-vue'
-import { useRouter } from "vue-router";
+import { type RouteRecordRaw } from "vue-router";
+import router from '@/router';
 //引入登录状态
 import { useLoginUserStore } from '@/stores/user';
 import { userLogoutUsingPost } from '@/api/userController';
+import checkAccess from '@/access/checkAccess';
 const loginUserStore = useLoginUserStore();
 //远程获取登录状态
 loginUserStore.getLoginUser();
+const loginUser = computed(() => loginUserStore.loginUser);
 // 原始菜单项
 const originalItems = [
    {
@@ -78,17 +81,36 @@ const originalItems = [
     title: '编程导航',
   },
 ]
+
+/**
+ * 将菜单项转换为路由项
+ */
+const menuToItem = (item: any): RouteRecordRaw | undefined => {
+  // 获取所有路由
+  const routes = router.getRoutes();
+  // 查找与菜单项key相同的路由
+  const route = routes.find((route) =>route.path === item.key);
+  // 如果找到了路由，返回路由项
+  return route
+}
+
+
 // 定义一个过滤菜单项的函数
 const filterMenuItems = (menuItems = [] as MenuProps['items']) => {
   return menuItems?.filter(item => {
-    if (item?.key.startsWith('/admin')) {
-      const loginUserStore = useLoginUserStore();
-      const loginUser = loginUserStore.loginUser;
-      if(!loginUser || loginUser.userRole !== 'admin'){
-      return false;
-      }
+    const routeItem = menuToItem(item);
+    // 如果不属于路由中的path，直接通过
+    if(!routeItem){
+      console.log("不属于自身路由");
+      return true;
     }
-    return true;
+    // 如果路由中hideInMenu为true，进行隐藏
+    if(routeItem.meta && routeItem.meta?.hideInMenu){
+      console.log("隐藏路由",routeItem.path);
+      return false;
+    }
+    console.log(routeItem.path,checkAccess(loginUser.value, routeItem.meta?.access as string));
+    return checkAccess(loginUser.value, routeItem.meta?.access as string);
 })
 }
 
@@ -96,7 +118,6 @@ const items = computed<MenuProps['items']>(() => {
   return filterMenuItems(originalItems);
 })
 
-const router = useRouter();
 // 路由跳转事件
 const doMenuClick = ({ key }: { key: string }) => {
   router.push({

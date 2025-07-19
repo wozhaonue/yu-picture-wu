@@ -49,7 +49,7 @@
     <a-modal v-model:open="open" title="编辑窗口" :confirm-loading="confirmLoading" @ok="handleOk" okText="保存">
               <a-form :model="editForm" layout="vertical">
                 <a-form-item label="ID">
-                  <a-input :defaultValue="editForm.id" disabled></a-input>
+                  <a-input :defaultValue="editForm.id" :disabled="true"></a-input>
                 </a-form-item>
                 <a-form-item label="用户名">
                   <a-input :defaultValue="editForm.userName"  v-model:value="editForm.userName"></a-input>

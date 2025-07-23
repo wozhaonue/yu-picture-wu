@@ -6,6 +6,7 @@ import AdminUserManagePage from '@/pages/admin/AdminUserManagePage.vue'
 import UserProfilePage from '@/pages/user/UserProfilePage.vue'
 import NoAuthPage from '@/pages/NoAuthPage.vue'
 import ACCESS_ENUM from '@/access/accessEnum'
+import AddPicturePage from '@/pages/AddPicturePage.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -49,6 +50,13 @@ const router = createRouter({
       component: NoAuthPage,
       meta:{
         hideInMenu: true,
+      }
+    },
+    {
+      path: '/add_picture',
+      component: AddPicturePage,
+      meta:{
+        access: ACCESS_ENUM.ADMIN,
       }
     }
   ],

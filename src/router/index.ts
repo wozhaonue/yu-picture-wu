@@ -3,6 +3,7 @@ import HomePage from '@/pages/HomePage.vue'
 import UserLoginPage from '@/pages/user/UserLoginPage.vue'
 import UserRegisterPage from '@/pages/user/UserRegisterPage.vue'
 import AdminUserManagePage from '@/pages/admin/AdminUserManagePage.vue'
+import AdminPictureManagePage from '@/pages/admin/AdminPictureManagePage.vue'
 import UserProfilePage from '@/pages/user/UserProfilePage.vue'
 import NoAuthPage from '@/pages/NoAuthPage.vue'
 import ACCESS_ENUM from '@/access/accessEnum'
@@ -58,7 +59,16 @@ const router = createRouter({
       meta:{
         access: ACCESS_ENUM.ADMIN,
       }
-    }
+    },
+    {
+      path: '/admin/pictureManage',
+      name: '图片管理',
+      component: AdminPictureManagePage,
+      meta: {
+        access: ACCESS_ENUM.ADMIN,
+      }
+    },
+
   ],
 })
 

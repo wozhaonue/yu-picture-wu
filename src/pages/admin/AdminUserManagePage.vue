@@ -37,7 +37,7 @@
             @confirm="confirm(record.id)"
             @cancel="cancel"
           >
-            <a-button type="link">删除</a-button>
+            <a-button type="link" danger>删除</a-button>
           </a-popconfirm>
 
         </template>
@@ -243,7 +243,7 @@ onMounted(() => {
   fetchData()
 })
 </script>
-<style>
+<style scoped>
 #admin-user-page {
   width: 70%;
   min-width: 360px;

@@ -1,10 +1,10 @@
 <template>
   <div id="admin-user-page">
     <a-form class="search-form" layout="inline" :model="searchParams" @finish="doSearch">
-      <a-form-item label="账号">
+      <a-form-item label="账号" name="userAccount">
         <a-input v-model:value="searchParams.userAccount" placeholder="请输入账号" allow-clear />
       </a-form-item>
-      <a-form-item label="用户名">
+      <a-form-item label="用户名" name="userName">
         <a-input v-model:value="searchParams.userName" placeholder="请输入用户名" allow-clear />
       </a-form-item>
       <a-form-item>

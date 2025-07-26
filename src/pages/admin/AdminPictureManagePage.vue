@@ -1,17 +1,17 @@
 <template>
   <div id="admin-picture-page">
     <a-form class="search-form" layout="inline" :model="searchParams" @finish="doSearch">
-      <a-form-item label="关键词">
+      <a-form-item label="关键词" name="searchText">
         <a-input
           v-model:value="searchParams.searchText"
           placeholder="从名称和简介中搜索"
           allow-clear
         />
       </a-form-item>
-      <a-form-item label="分类">
+      <a-form-item label="分类" name="category">
         <a-input v-model:value="searchParams.category" placeholder="请输入分类" allow-clear />
       </a-form-item>
-      <a-form-item label="标签">
+      <a-form-item class="form-item-tags" label="标签" name="tags">
         <a-select
           mode="tags"
           v-model:value="searchParams.tags"
@@ -220,6 +220,9 @@ onMounted(() => {
 }
 #admin-picture-page .search-form {
   margin-bottom: 16px;
+}
+#admin-picture-page .form-item-tags {
+  min-width: 200px;
 }
 #admin-picture-page .search-form .ant-form-inline .ant-form-item {
   margin-bottom: 16px; /* 根据需要调整此值 */

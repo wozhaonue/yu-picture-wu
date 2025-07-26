@@ -1,6 +1,6 @@
 <template>
   <div id="add-picture-page">
-    <h2 style="margin-bottom: 16px; text-align: center">
+    <h2 style="margin-bottom: 16px; text-align: left">
       {{ route?.query?.id ? '修改图片' : '创建图片' }}
     </h2>
     <PictureUpload :picture="picture" :onSuccess="onSuccess" />
@@ -167,7 +167,7 @@ onMounted(() => {
 
 <style scoped>
 #add-picture-page {
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto;
 }
 #add-picture-page .submit-button {

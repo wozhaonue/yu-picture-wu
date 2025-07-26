@@ -41,7 +41,6 @@ const handleUpload = async ({file}:any) => {
     // console.log(params); 测试id是否正确
     const res = await uploadPictureUsingPost(params,{},file);
     if(res.data.code === 0 && res.data.data){
-      message.success(res.data.message);
       message.success("上传成功");
       // 将上传成功的图片信息传递给父组件
       props.onSuccess?.(res.data.data);

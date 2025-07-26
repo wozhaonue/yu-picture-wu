@@ -83,8 +83,8 @@ const originalItems = [
   },
   {
     key: '/add_picture',
-    label: '创建图片',
-    title: '创建图片',
+    label: '图片创建',
+    title: '图片创建',
   },
   {
     key: '/others',

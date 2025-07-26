@@ -1,5 +1,9 @@
 <template>
   <div id="admin-picture-page">
+    <a-flex justify="space-between" style="margin-bottom: 16px;">
+      <h2>图片管理</h2>
+      <a-button type="primary" href="/add_picture" target="_blank"><PlusOutlined />创建图片</a-button>
+    </a-flex>
     <a-form class="search-form" layout="inline" :model="searchParams" @finish="doSearch">
       <a-form-item label="关键词" name="searchText">
         <a-input
@@ -73,6 +77,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+import {PlusOutlined} from '@ant-design/icons-vue'
 import { deletePictureUsingPost, listPictureVoByPageUsingPost } from '@/api/pictureController'
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'

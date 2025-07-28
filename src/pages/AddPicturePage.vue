@@ -97,7 +97,9 @@ const handleSubmit = async (value: API.PictureEditRequest) => {
   })
   if (res.data.code === 0 && res.data.data) {
     message.success('创建成功')
-    router.push('/picture/${picture.value.id}')
+    router.push({
+      path: `/picture/${picture.value.id}`,
+    })
   } else {
     message.error('创建失败')
     console.error(res.data.message)

@@ -11,12 +11,12 @@
     </div>
     <div class="categorys-show">
       <a-tabs v-model:activeKey="selectedCategory" @change="doSearch">
-      <a-tag-pane key="all" tab="全部" />
-      <a-tag-pane v-for="category in categoryList" :key="category" :tab="category" />
-    </a-tabs>
+        <a-tab-pane key="all" tab="全部" />
+        <a-tab-pane v-for="category in categoryList" :key="category" :tab="category" />
+      </a-tabs>
     </div>
     <div class="tags-show">
-      <span style="margin-right: 4px; font-weight: bold;">标签：</span>
+      <span style="margin-right: 4px; font-weight: bold">标签：</span>
       <a-space wrap>
         <a-checkable-tag
           v-for="(tag, index) in tagsList"
@@ -30,33 +30,43 @@
     </div>
     <div class="list-container">
       <a-list
-      :grid="{ xs: 1, sm: 2, md: 3, lg: 4, xl: 5, xxl: 6 }"
-      :data-source="dataList"
-      :loading="loading"
-      :pagination="pagination"
-      style="justify-content: c;"
-    >
-      <template #renderItem="{ item: picture }">
-        <div class="card-container" style="padding: 8px;">
-          <a-card size="default" hoverable style="width: 240px;" @click="doClickPicture(picture)">
-          <template #cover>
-              <img :alt="picture.name" :src="picture.url" style="height: 180px; object-fit: cover" />
-          </template>
-          <a-card-meta :title="picture.name" style="height: 60px;">
-            <template #description>
-              <a-tag v-if="picture.category" color="green">{{ picture.category }}</a-tag>
-              <a-tag v-for="tag in picture.tags" :key="tag">{{ tag }}</a-tag>
-            </template>
-          </a-card-meta>
-        </a-card>
-        </div>
-      </template>
-    </a-list>
+        :grid="{ xs: 1, sm: 2, md: 3, lg: 4, xl: 5, xxl: 6 }"
+        :data-source="dataList"
+        :loading="loading"
+        :pagination="pagination"
+        style="justify-content: c"
+      >
+        <template #renderItem="{ item: picture }">
+          <div class="card-container" style="padding: 8px">
+            <a-card size="default" hoverable style="width: 240px" @click="doClickPicture(picture)">
+              <template #cover>
+                <img
+                  :alt="picture.name"
+                  :src="picture.url"
+                  style="height: 180px; object-fit: cover"
+                />
+              </template>
+              <template #action>
+                <setting-outlined key="setting" />
+                <edit-outlined key="edit" />
+                <ellipsis-outlined key="ellipsis" />
+              </template>
+              <a-card-meta :title="picture.name" style="height: 60px">
+                <template #description>
+                  <a-tag v-if="picture.category" color="green">{{ picture.category }}</a-tag>
+                  <a-tag v-for="tag in picture.tags" :key="tag">{{ tag }}</a-tag>
+                </template>
+              </a-card-meta>
+            </a-card>
+          </div>
+        </template>
+      </a-list>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons-vue'
 import {
   listPictureTagCategoryUsingGet,
   listPictureVoByPageUsingPost,
@@ -105,27 +115,27 @@ const getTagsAndCategoryOptions = async () => {
 const fetchData = async () => {
   loading.value = true
   // 转换数据
-  const category = selectedCategory.value === 'all' ? '' : selectedCategory.value;
+  const category = selectedCategory.value === 'all' ? '' : selectedCategory.value
   const params = {
     ...searchParams,
     category,
     tags: [] as string[],
   }
   // 遍历selectedTags，如果为true，则将对应的tagsList[index]添加到params.tags中
-  selectedTags.value.forEach((useTags,index) => {
+  selectedTags.value.forEach((useTags, index) => {
     if (useTags) {
-      params.tags.push(tagsList.value[index]);
+      params.tags.push(tagsList.value[index])
     }
   })
-  const res = await listPictureVoByPageUsingPost(params);
+  const res = await listPictureVoByPageUsingPost(params)
   if (res.data.data && res.data.code === 0) {
     // message.success('获取数据成功')
-    console.log('获取数据成功');
+    console.log('获取数据成功')
     dataList.value = res.data.data.records ?? []
-    total.value = res.data.data.total ?? 0
+    total.value = Number(res.data.data.total) ? Number(res.data.data.total) : 0
   } else {
     message.error('网络异常')
-    console.error(res,'获取列表信息失败')
+    console.error(res, '获取列表信息失败')
   }
   loading.value = false
 }
@@ -133,7 +143,7 @@ const fetchData = async () => {
  * 点击图片跳转到详情页
  * @param picture
  */
-const router = useRouter();
+const router = useRouter()
 const doClickPicture = (picture: API.PictureVO) => {
   router.push({
     path: `/picture/${picture.id}`,
@@ -150,7 +160,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
 #homePage .search-input {
   max-width: 480px;
   margin: 0 auto 16px;

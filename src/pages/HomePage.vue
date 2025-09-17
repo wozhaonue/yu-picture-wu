@@ -9,12 +9,14 @@
         @search="doSearch"
       />
     </div>
-    <a-tabs v-model:activeKey="selectedCategory" @change="doSearch">
+    <div class="categorys-show">
+      <a-tabs v-model:activeKey="selectedCategory" @change="doSearch">
       <a-tag-pane key="all" tab="全部" />
       <a-tag-pane v-for="category in categoryList" :key="category" :tab="category" />
     </a-tabs>
+    </div>
     <div class="tags-show">
-      <span style="margin-right: 8px">标签：</span>
+      <span style="margin-right: 4px; font-weight: bold;">标签：</span>
       <a-space wrap>
         <a-checkable-tag
           v-for="(tag, index) in tagsList"
@@ -26,26 +28,31 @@
         </a-checkable-tag>
       </a-space>
     </div>
-    <a-list
-      :grid="{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 4, xl: 5 }"
+    <div class="list-container">
+      <a-list
+      :grid="{ xs: 1, sm: 2, md: 3, lg: 4, xl: 5, xxl: 6 }"
       :data-source="dataList"
       :loading="loading"
       :pagination="pagination"
+      style="justify-content: c;"
     >
       <template #renderItem="{ item: picture }">
-        <a-card hoverable style="width: 240px" @click="doClickPicture(picture)">
+        <div class="card-container" style="padding: 8px;">
+          <a-card size="default" hoverable style="width: 240px;" @click="doClickPicture(picture)">
           <template #cover>
-            <img :alt="picture.name" :src="picture.url" style="height: 180px; object-fit: cover" />
+              <img :alt="picture.name" :src="picture.url" style="height: 180px; object-fit: cover" />
           </template>
-          <a-card-meta :title="picture.name">
+          <a-card-meta :title="picture.name" style="height: 60px;">
             <template #description>
-              <a-tag color="green">{{ picture.category ?? '默认' }}</a-tag>
+              <a-tag v-if="picture.category" color="green">{{ picture.category }}</a-tag>
               <a-tag v-for="tag in picture.tags" :key="tag">{{ tag }}</a-tag>
             </template>
           </a-card-meta>
         </a-card>
+        </div>
       </template>
     </a-list>
+    </div>
   </div>
 </template>
 
@@ -57,6 +64,7 @@ import {
 import { message } from 'ant-design-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+// import checkAccess from '../access/checkAccess';
 
 const dataList = ref<API.PictureVO[]>([])
 const total = ref<number>(0)
@@ -111,12 +119,13 @@ const fetchData = async () => {
   })
   const res = await listPictureVoByPageUsingPost(params);
   if (res.data.data && res.data.code === 0) {
-    message.success('获取数据成功')
+    // message.success('获取数据成功')
+    console.log('获取数据成功');
     dataList.value = res.data.data.records ?? []
     total.value = res.data.data.total ?? 0
   } else {
-    message.error(res.data.message ?? '获取数据失败')
-    console.error('获取列表信息失败')
+    message.error('网络异常')
+    console.error(res,'获取列表信息失败')
   }
   loading.value = false
 }
@@ -141,14 +150,21 @@ onMounted(() => {
 </script>
 
 <style scoped>
-#homePage {
-  margin-bottom: 16px;
-}
+
 #homePage .search-input {
   max-width: 480px;
   margin: 0 auto 16px;
 }
+#homePage .overlay-name {
+  font-weight: bold;
+}
 #homePage .tags-show {
-  margin-bottom: 16px;
+  margin: 0 auto 16px;
+}
+#homePage .tags-show span {
+  font-size: 0.85rem;
+}
+#homePage .categorys-show {
+  margin: 0 auto;
 }
 </style>

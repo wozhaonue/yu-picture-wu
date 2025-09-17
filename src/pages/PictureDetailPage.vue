@@ -93,12 +93,12 @@ const getPictureDetail = async () => {
   })
   // 如果请求成功，则进行赋值
   if (res.data.code === 0 && res.data.data) {
-    message.success('获取成功')
+    // message.success('获取成功')
     const data = res.data.data
     pictureData.value = data
     // console.log(pictureData.value)
   } else {
-    message.error('获取失败')
+    // message.error('获取失败')
     console.error(res.data.message)
   }
 }

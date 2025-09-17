@@ -146,10 +146,19 @@ const doDelete = async () => {
 /**
  * 下载图片
  */
-const doDownLoad = () => {
+const doDownLoad = async () => {
   // 调用utils文件夹中的工具函数downloadFile
   // 传入图片的url，名字可传可不传
-  downloadFile(pictureData.value.url)
+  if (pictureData.value.url) {
+    const downloadSuccess = await downloadFile(pictureData.value.url)
+    if (downloadSuccess) {
+      message.success('图片下载已开始，请检查浏览器下载文件夹')
+    } else {
+      message.error('下载失败，图片资源可能不可用')
+    }
+  } else {
+    message.error('下载失败，图片地址无效')
+  }
 }
 const cancel = () => {
   console.log('取消删除图片数据操作')

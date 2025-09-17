@@ -38,18 +38,19 @@
       >
         <template #renderItem="{ item: picture }">
           <div class="card-container" style="padding: 8px">
-            <a-card size="default" hoverable style="width: 240px" @click="doClickPicture(picture)">
+            <a-card
+              size="default"
+              hoverable
+              style="width: 240px"
+              :actions="getCardActions(picture.url)"
+              @click="doClickPicture(picture)"
+            >
               <template #cover>
                 <img
                   :alt="picture.name"
                   :src="picture.url"
                   style="height: 180px; object-fit: cover"
                 />
-              </template>
-              <template #action>
-                <setting-outlined key="setting" />
-                <edit-outlined key="edit" />
-                <ellipsis-outlined key="ellipsis" />
               </template>
               <a-card-meta :title="picture.name" style="height: 60px">
                 <template #description>
@@ -66,19 +67,56 @@
 </template>
 
 <script setup lang="ts">
-import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons-vue'
+import { DownloadOutlined,QuestionCircleOutlined,CopyOutlined } from '@ant-design/icons-vue'
 import {
   listPictureTagCategoryUsingGet,
   listPictureVoByPageUsingPost,
 } from '@/api/pictureController'
 import { message } from 'ant-design-vue'
-import { computed, onMounted, reactive, ref } from 'vue'
+import { downloadFile } from '@/utils'
+import { computed, onMounted, reactive, ref, h } from 'vue'
 import { useRouter } from 'vue-router'
 // import checkAccess from '../access/checkAccess';
 
 const dataList = ref<API.PictureVO[]>([])
 const total = ref<number>(0)
 const loading = ref<boolean>(false)
+
+// 定义卡片操作按钮（动态生成，接收picture.url参数）
+const getCardActions = (pictureUrl: string) => [
+  h(DownloadOutlined, {
+    key: 'downloadPicture',
+    onClick: (e: Event) => handleCardAction(e, 'downloadPicture', pictureUrl)
+  }),
+  h(QuestionCircleOutlined, {
+    key: 'pictureInfo',
+  }),
+  h(CopyOutlined, {
+    key: 'copyPicture',
+  }),
+]
+
+// 处理卡片操作按钮点击事件
+const handleCardAction = async (e: Event, action: string, pictureUrl?: string) => {
+  e.stopPropagation() // 阻止事件冒泡，避免触发卡片点击事件
+  console.log(`点击了${action}按钮，图片URL: ${pictureUrl}`)
+  // 这里可以根据不同的action执行不同的操作
+  switch (action) {
+    case 'downloadPicture':
+      // 调用下载图片的方法，传入具体的图片URL
+      if (pictureUrl) {
+    const downloadSuccess = await downloadFile(pictureUrl)
+    if (downloadSuccess) {
+      message.success('图片下载已开始，请检查浏览器下载文件夹')
+    } else {
+      message.error('下载失败，图片资源可能不可用')
+    }
+  } else {
+    message.error('下载失败，图片地址无效')
+  }
+      break
+  }
+}
 // 搜索条件
 const searchParams = reactive<API.PictureQueryRequest>({
   current: 1,

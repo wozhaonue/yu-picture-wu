@@ -24,7 +24,6 @@
           :options="tagsList"
         />
       </a-form-item>
-      <!-- reviewStatus -->
        <a-form-item class="form-item-tags" label="审核状态" name="reviewStatus">
         <a-select
           v-model:value="searchParams.reviewStatus"

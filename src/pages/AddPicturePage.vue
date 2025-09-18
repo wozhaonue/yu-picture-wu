@@ -3,7 +3,16 @@
     <h2 style="margin-bottom: 16px; text-align: left">
       {{ route?.query?.id ? '修改图片' : '创建图片' }}
     </h2>
-    <PictureUpload :picture="picture" :onSuccess="onSuccess" />
+    <div class="choose-tabs">
+      <a-tabs v-model:activeKey="activeKey">
+    <a-tab-pane key="picture" tab="图片上传">
+      <PictureUpload :picture="picture" :onSuccess="onSuccess" />
+    </a-tab-pane>
+    <a-tab-pane key="url" tab="URL上传" force-render>
+      <UrlPictureUpload :picture="picture" :onSuccess="onSuccess"/>
+    </a-tab-pane>
+  </a-tabs>
+    </div>
     <a-form
       v-if="picture"
       layout="vertical"
@@ -55,11 +64,14 @@ import {
   getPictureVoByIdUsingGet,
   listPictureTagCategoryUsingGet,
 } from '@/api/pictureController'
+import urlPictureUpload from '@/components/urlPictureUpload.vue'
 import PictureUpload from '@/components/PictureUplo​ad.vue'
 import { message } from 'ant-design-vue'
 import { onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import UrlPictureUpload from '@/components/urlPictureUpload.vue'
 
+const activeKey = ref<'picture' | 'url'>('picture');
 const route = useRoute()
 const router = useRouter()
 const pictureForm = reactive<API.PictureEditRequest>({} as API.PictureEditRequest)

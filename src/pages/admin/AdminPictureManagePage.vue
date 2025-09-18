@@ -13,13 +13,15 @@
         />
       </a-form-item>
       <a-form-item label="分类" name="category">
-        <a-input v-model:value="searchParams.category" placeholder="请输入分类" allow-clear />
+        <a-select v-model:value="searchParams.category" placeholder="请选择分类" :options="categoryList" allow-clear />
       </a-form-item>
       <a-form-item class="form-item-tags" label="标签" name="tags">
-        <a-input
+        <a-select
+          mode="tags"
           v-model:value="searchParams.tags"
           placeholder="请输入标签"
           allowClear
+          :options="tagsList"
         />
       </a-form-item>
       <!-- reviewStatus -->
@@ -99,7 +101,7 @@
 </template>
 <script lang="ts" setup>
 import {PlusOutlined} from '@ant-design/icons-vue'
-import { deletePictureUsingPost, doPictureReviewUsingPost, listPictureByPageUsingPost } from '@/api/pictureController'
+import { deletePictureUsingPost, doPictureReviewUsingPost, listPictureByPageUsingPost, listPictureTagCategoryUsingGet } from '@/api/pictureController'
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
 import { computed, onMounted, reactive, ref } from 'vue'
@@ -175,7 +177,32 @@ const columns = [
     fixed: 'right'
   },
 ]
-
+type options = {
+  label: string;
+  value: string;
+}
+const categoryList = ref<options[]>([]);
+const tagsList = ref<options[]>([]);
+// 获取标签和分类数据
+const getTagsAndCategoryOptions = async () => {
+  const res = await listPictureTagCategoryUsingGet()
+  // 如果请求成功，则赋值给两个选项数据
+  if (res.data.code === 0 && res.data.data) {
+    categoryList.value = res.data.data.categoryList ? res.data.data.categoryList.map((item) => {
+      return{
+        label: item,
+        value: item,
+      }
+    }) : []
+    // tagsList
+    tagsList.value = res.data.data.tagList ? res.data.data.tagList.map((item) => {
+      return{
+        label: item,
+        value: item,
+      }
+    }) : []
+  }
+}
 // 定义数据
 const dataList = ref<API.Picture[]>([])
 const total = ref(0)
@@ -270,6 +297,7 @@ const handleReview = async (record: API.Picture, reviewStatus: number) => {
 
 onMounted(() => {
   fetchData()
+  getTagsAndCategoryOptions()
 })
 </script>
 <style scoped>

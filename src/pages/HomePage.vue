@@ -28,7 +28,6 @@
         </a-checkable-tag>
       </a-space>
     </div>
-    <div class="list-container">
       <a-list
         :grid="{ xs: 1, sm: 2, md: 3, lg: 4, xl: 5, xxl: 6 }"
         :data-source="dataList"
@@ -62,7 +61,6 @@
           </div>
         </template>
       </a-list>
-    </div>
   </div>
 </template>
 
@@ -129,8 +127,8 @@ const pagination = computed(() => {
     current: searchParams.current,
     pageSize: searchParams.pageSize,
     total: total.value,
-    onchange: (page: number, pageSize: number) => {
-      searchParams.current = page
+    onChange: (current: number, pageSize: number) => {
+      searchParams.current = current
       searchParams.pageSize = pageSize
       fetchData()
     },

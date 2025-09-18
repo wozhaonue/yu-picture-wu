@@ -17,7 +17,7 @@
 
       <a-form-item label="简介" name="introduction">
         <a-textarea
-          :autosize="{ minRows: 2, maxRows: 6 }"
+          :autoSize="{ minRows: 2, maxRows: 6 }"
           v-model:value="pictureForm.introduction"
           placeholder="请输入简介"
           allowClear

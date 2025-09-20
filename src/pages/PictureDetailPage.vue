@@ -3,7 +3,25 @@
     <a-row :gutter="[16, 16]">
       <a-col :xs="24" :md="16" :lg="16" :xl="16">
         <a-card title="图片预览">
-          <a-image style="max-height: 480px" :src="pictureData.url"></a-image>
+          <!-- 高清图片预览实现渐进加载 -->
+          <a-image style="height: 480px" :src="pictureData.url">
+            <template v-if="pictureData.thumbnailUrl" #placeholder>
+              <a-image :src="pictureData.thumbnailUrl" style="height: 480px" :preview="false" />
+            </template>
+            <template v-else #placeholder>
+              <div
+                style="
+                  background-color: #f0f0f0;
+                  height: 480px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                "
+              >
+                <a-spin />
+              </div>
+            </template>
+          </a-image>
         </a-card>
       </a-col>
       <a-col :xs="24" :md="8" :lg="8" :xl="8">

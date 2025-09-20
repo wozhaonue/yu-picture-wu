@@ -171,7 +171,7 @@ const fetchData = async () => {
     console.log('获取数据成功')
     dataList.value = res.data.data.records ?? []
     total.value = Number(res.data.data.total) ? Number(res.data.data.total) : 0
-    // 数据加载完成后，等待DOM更新再执行懒加载
+    // 数据加载完成后，等待DOM更新再执行懒加载 确保懒加载时可以获取到懒加载的image的dom元素
     nextTick(() => {
       lazyLoading()
     })
@@ -196,7 +196,7 @@ const doSearch = () => {
   fetchData()
 }
 
-// 懒加载图片数据
+// 懒加载图片数据 通过提前存储url，之后再赋值给url属性来实现
 const lazyLoading = () => {
   const lazyImageList = document.querySelectorAll('.lazy-image');
   console.log('找到懒加载图片数量:', lazyImageList.length);

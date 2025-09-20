@@ -9,6 +9,7 @@ import NoAuthPage from '@/pages/NoAuthPage.vue'
 import PictureDetailPage from '@/pages/PictureDetailPage.vue'
 import ACCESS_ENUM from '@/access/accessEnum'
 import AddPicturePage from '@/pages/AddPicturePage.vue'
+import AddPictureBatchPage from '@/pages/AddPictureBatchPage.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -58,6 +59,14 @@ const router = createRouter({
       path: '/add_picture',
       component: AddPicturePage,
       meta:{
+        access: ACCESS_ENUM.USER,
+      }
+    },
+    {
+      path: '/addBatch_picture',
+      component: AddPictureBatchPage,
+      name: '批量创建图片',
+      meta: {
         access: ACCESS_ENUM.USER,
       }
     },

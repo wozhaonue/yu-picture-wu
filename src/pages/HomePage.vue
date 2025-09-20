@@ -47,7 +47,9 @@
               <template #cover>
                 <img
                   :alt="picture.name"
-                  :src="picture.url"
+                  class="lazy-image"
+                  src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQwIiBoZWlnaHQ9IjE4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuWKoOi9veS4rS4uLjwvdGV4dD48L3N2Zz4="
+                  :data-src="picture.thumbnailUrl"
                   style="height: 180px; object-fit: cover"
                 />
               </template>
@@ -72,7 +74,7 @@ import {
 } from '@/api/pictureController'
 import { message } from 'ant-design-vue'
 import { downloadFile } from '@/utils'
-import { computed, onMounted, reactive, ref, h } from 'vue'
+import { computed, onMounted, reactive, ref, h, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 // import checkAccess from '../access/checkAccess';
 
@@ -169,6 +171,10 @@ const fetchData = async () => {
     console.log('获取数据成功')
     dataList.value = res.data.data.records ?? []
     total.value = Number(res.data.data.total) ? Number(res.data.data.total) : 0
+    // 数据加载完成后，等待DOM更新再执行懒加载
+    nextTick(() => {
+      lazyLoading()
+    })
   } else {
     message.error('网络异常')
     console.error(res, '获取列表信息失败')
@@ -188,6 +194,43 @@ const doClickPicture = (picture: API.PictureVO) => {
 const doSearch = () => {
   searchParams.current = 1
   fetchData()
+}
+
+// 懒加载图片数据
+const lazyLoading = () => {
+  const lazyImageList = document.querySelectorAll('.lazy-image');
+  console.log('找到懒加载图片数量:', lazyImageList.length);
+
+  // 让图片提前50%开始加载
+  const option = {rootMargin: '0px 0px 30% 0px'}
+
+  if('IntersectionObserver' in window) {
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        if(entry.isIntersecting) {
+          const img = entry.target as HTMLImageElement;
+          const src = img.getAttribute('data-src');
+          console.log('开始加载图片:', src);
+          if(src){
+            img.src = src;
+            img.onload = () => {
+              console.log('图片加载完成:', src);
+            };
+            img.onerror = () => {
+              console.error('图片加载失败:', src);
+            };
+            observer.unobserve(img);
+          }
+        }
+      })
+    }, option)
+
+    lazyImageList.forEach(lazyImage => {
+      imageObserver.observe(lazyImage)
+    })
+  } else{
+    console.log('IntersectionObserver 不被支持，无法实现懒加载。');
+  }
 }
 onMounted(() => {
   fetchData()

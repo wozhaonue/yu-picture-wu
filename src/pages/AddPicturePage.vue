@@ -64,7 +64,6 @@ import {
   getPictureVoByIdUsingGet,
   listPictureTagCategoryUsingGet,
 } from '@/api/pictureController'
-import urlPictureUpload from '@/components/urlPictureUpload.vue'
 import PictureUpload from '@/components/PictureUplo​ad.vue'
 import { message } from 'ant-design-vue'
 import { onMounted, reactive, ref } from 'vue'

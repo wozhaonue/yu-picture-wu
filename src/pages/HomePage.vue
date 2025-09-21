@@ -28,113 +28,69 @@
         </a-checkable-tag>
       </a-space>
     </div>
-      <a-list
-        :grid="{ xs: 1, sm: 2, md: 3, lg: 4, xl: 5, xxl: 6 }"
-        :data-source="dataList"
-        :loading="loading"
-        :pagination="pagination"
-        style="justify-content: c"
-      >
-        <template #renderItem="{ item: picture }">
-          <div class="card-container" style="padding: 8px">
-            <a-card
-              size="default"
-              hoverable
-              style="width: 240px"
-              :actions="getCardActions(picture.url)"
-              @click="doClickPicture(picture)"
-            >
-              <template #cover>
-                <img
-                  :alt="picture.name"
-                  class="lazy-image"
-                  src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQwIiBoZWlnaHQ9IjE4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuWKoOi9veS4rS4uLjwvdGV4dD48L3N2Zz4="
-                  :data-src="picture.thumbnailUrl"
-                  style="height: 180px; object-fit: cover"
-                />
-              </template>
-              <a-card-meta :title="picture.name" style="height: 60px">
-                <template #description>
-                  <a-tag v-if="picture.category" color="green">{{ picture.category }}</a-tag>
-                  <a-tag v-for="tag in picture.tags" :key="tag">{{ tag }}</a-tag>
-                </template>
-              </a-card-meta>
-            </a-card>
+    <div class="custom-picture-grid">
+      <div v-if="loading" class="loading-contaienr">
+        <div class="loading-spinner">加载中...</div>
+      </div>
+      <div v-else-if="loading === false && dataList.length !== 0" class="picture-grid">
+        <div
+          v-for="picture in dataList"
+          :key="picture.id"
+          @click="doClickPicture(picture)"
+          class="picture-card"
+        >
+          <!-- 图片封面 -->
+          <div class="picture-cover">
+            <img :src="picture.thumbnailUrl" />
+            <div class="picture-overlay">
+              <div class="overlay-content">
+                <h3 class="picture-title">{{ picture.name }}</h3>
+                <div class="picture-tags">
+                  <span v-if="picture.category" class="tag category-tag">
+                    {{ picture.category }}
+                  </span>
+                  <span v-for="tag in picture.tags" class="tag" :key="tag">
+                    {{ tag }}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
-        </template>
-      </a-list>
+        </div>
+      </div>
+      <div v-else class="empty-container">
+        <a-empty></a-empty>
+      </div>
+    </div>
+    <!-- 自定义分页组件 -->
+    <div class="custom-pagination">
+      <a-pagination
+        v-model:value="searchParams.current"
+        :pageSize="searchParams.pageSize"
+        :total="total"
+        @change="changePage"
+      ></a-pagination>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { DownloadOutlined,QuestionCircleOutlined,CopyOutlined } from '@ant-design/icons-vue'
 import {
   listPictureTagCategoryUsingGet,
   listPictureVoByPageUsingPost,
 } from '@/api/pictureController'
 import { message } from 'ant-design-vue'
-import { downloadFile } from '@/utils'
-import { computed, onMounted, reactive, ref, h, nextTick } from 'vue'
+import {  onMounted, reactive, ref, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 // import checkAccess from '../access/checkAccess';
 
 const dataList = ref<API.PictureVO[]>([])
 const total = ref<number>(0)
 const loading = ref<boolean>(false)
-
-// 定义卡片操作按钮（动态生成，接收picture.url参数）
-const getCardActions = (pictureUrl: string) => [
-  h(DownloadOutlined, {
-    key: 'downloadPicture',
-    onClick: (e: Event) => handleCardAction(e, 'downloadPicture', pictureUrl)
-  }),
-  h(QuestionCircleOutlined, {
-    key: 'pictureInfo',
-  }),
-  h(CopyOutlined, {
-    key: 'copyPicture',
-  }),
-]
-
-// 处理卡片操作按钮点击事件
-const handleCardAction = async (e: Event, action: string, pictureUrl?: string) => {
-  e.stopPropagation() // 阻止事件冒泡，避免触发卡片点击事件
-  console.log(`点击了${action}按钮，图片URL: ${pictureUrl}`)
-  // 这里可以根据不同的action执行不同的操作
-  switch (action) {
-    case 'downloadPicture':
-      // 调用下载图片的方法，传入具体的图片URL
-      if (pictureUrl) {
-    const downloadSuccess = await downloadFile(pictureUrl)
-    if (downloadSuccess) {
-      message.success('图片下载已开始，请检查浏览器下载文件夹')
-    } else {
-      message.error('下载失败，图片资源可能不可用')
-    }
-  } else {
-    message.error('下载失败，图片地址无效')
-  }
-      break
-  }
-}
 // 搜索条件
 const searchParams = reactive<API.PictureQueryRequest>({
   current: 1,
   pageSize: 12,
-})
-
-// 分页参数
-const pagination = computed(() => {
-  return {
-    current: searchParams.current,
-    pageSize: searchParams.pageSize,
-    total: total.value,
-    onChange: (current: number, pageSize: number) => {
-      searchParams.current = current
-      searchParams.pageSize = pageSize
-      fetchData()
-    },
-  }
 })
 const categoryList = ref<string[]>([])
 const selectedCategory = ref<string>('all')
@@ -181,6 +137,7 @@ const fetchData = async () => {
   }
   loading.value = false
 }
+
 /**
  * 点击图片跳转到详情页
  * @param picture
@@ -198,39 +155,49 @@ const doSearch = () => {
 
 // 懒加载图片数据 通过提前存储url，之后再赋值给url属性来实现
 const lazyLoading = () => {
-  const lazyImageList = document.querySelectorAll('.lazy-image');
-  console.log('找到懒加载图片数量:', lazyImageList.length);
+  const lazyImageList = document.querySelectorAll('.lazy-image')
+  console.log('找到懒加载图片数量:', lazyImageList.length)
 
   // 让图片提前50%开始加载
-  const option = {rootMargin: '0px 0px 30% 0px'}
+  const option = { rootMargin: '0px 0px 30% 0px' }
 
-  if('IntersectionObserver' in window) {
+  if ('IntersectionObserver' in window) {
     const imageObserver = new IntersectionObserver((entries, observer) => {
       entries.forEach((entry) => {
-        if(entry.isIntersecting) {
-          const img = entry.target as HTMLImageElement;
-          const src = img.getAttribute('data-src');
-          console.log('开始加载图片:', src);
-          if(src){
-            img.src = src;
+        if (entry.isIntersecting) {
+          const img = entry.target as HTMLImageElement
+          const src = img.getAttribute('data-src')
+          console.log('开始加载图片:', src)
+          if (src) {
+            img.src = src
             img.onload = () => {
-              console.log('图片加载完成:', src);
-            };
+              console.log('图片加载完成:', src)
+            }
             img.onerror = () => {
-              console.error('图片加载失败:', src);
-            };
-            observer.unobserve(img);
+              console.error('图片加载失败:', src)
+            }
+            observer.unobserve(img)
           }
         }
       })
     }, option)
 
-    lazyImageList.forEach(lazyImage => {
+    lazyImageList.forEach((lazyImage) => {
       imageObserver.observe(lazyImage)
     })
-  } else{
-    console.log('IntersectionObserver 不被支持，无法实现懒加载。');
+  } else {
+    console.log('IntersectionObserver 不被支持，无法实现懒加载。')
   }
+}
+/**
+ * 分页器的change事件的回调函数
+ */
+const changePage = (current: number, pageSize: number) => {
+  searchParams.current = current
+  searchParams.pageSize = pageSize
+  fetchData()
+  // 滚动到顶部
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 onMounted(() => {
   fetchData()
@@ -254,5 +221,138 @@ onMounted(() => {
 }
 #homePage .categorys-show {
   margin: 0 auto;
+}
+
+/* 纯css的新的图片列表的样式 */
+/* 保持水平居中 */
+#homePage .custom-picture-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+/* 包裹加载状态的父容器将加载状态本身设置为flex
+    并将其设置为水平和垂直居中 */
+#homePage .loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+/* text-align将文本设置为水平居中 */
+#homePage .loading-spinner {
+  font-size: 24px;
+  text-align: center;
+  color: #666;
+}
+
+/* 图片网格布局 */
+/* grid-template-columns设置为每列的弹性宽度以及列数需要怎么增减 */
+#homePage .picture-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+/* 关于移动端调整的响应式布局 */
+@media (max-width: 768px) {
+  #homePage .picture-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+}
+@media (max-width: 480px) {
+  #homePage .picture-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+/* 图片卡片 */
+#homePage .picture-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  height: 240px;
+  display: flex;
+  flex-direction: column;
+}
+/* 鼠标悬停时使得卡片向上缓慢移动形成动销，并增加阴影来体现悬停后的聚焦效果 */
+#homePage .picture-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* 图片封面区域 */
+/* position为relative为了让悬浮遮罩能够据其进行定位 */
+#homePage .picture-cover {
+  position: relative;
+  height: 240px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+/* object-cover让图片的展示更好 */
+#homePage .picture-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+/* 悬停时图片变大为原本的1.05倍 */
+#homePage .picture-card:hover .picture-cover img {
+  transform: scale(1.05);
+}
+
+/* 悬浮遮罩 */
+#homePage .picture-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: flex-end;
+  padding: 20px;
+}
+
+/* 悬停时通过不透明度调整到最大来让遮罩中的内容显示 */
+#homePage .picture-card:hover .picture-overlay {
+  opacity: 1;
+}
+#homePage .overlay-content {
+  color: rgba(255, 255, 255, 0.8);
+}
+#homePage .picture-title {
+  margin: 0;
+  margin-bottom: 24px;
+  font-size: 16px;
+  font-weight: 600;
+}
+/* 标签样式 */
+#homePage .picture-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+#homePage .tag {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  background: #f0f0f0;
+  color: #666;
+  border: 1px solid #e0e0e0;
+}
+
+#homePage .category-tag {
+  background: #e6f7ff;
+  color: #1890ff;
+  border-color: #91d5ff;
 }
 </style>

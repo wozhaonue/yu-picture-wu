@@ -10,6 +10,8 @@ import PictureDetailPage from '@/pages/PictureDetailPage.vue'
 import ACCESS_ENUM from '@/access/accessEnum'
 import AddPicturePage from '@/pages/AddPicturePage.vue'
 import AddPictureBatchPage from '@/pages/AddPictureBatchPage.vue'
+import AdminSpaceManagePage from '@/pages/admin/AdminSpaceManagePage.vue'
+import AddSpacePage from '@/pages/AddSpacePage.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -63,6 +65,13 @@ const router = createRouter({
       }
     },
     {
+      path: '/add_space',
+      component: AddSpacePage,
+      meta:{
+        access: ACCESS_ENUM.USER,
+      }
+    },
+    {
       path: '/addBatch_picture',
       component: AddPictureBatchPage,
       name: '批量创建图片',
@@ -74,6 +83,14 @@ const router = createRouter({
       path: '/admin/pictureManage',
       name: '图片管理',
       component: AdminPictureManagePage,
+      meta: {
+        access: ACCESS_ENUM.ADMIN,
+      }
+    },
+    {
+      path: '/admin/spaceManage',
+      name: '空间管理',
+      component: AdminSpaceManagePage,
       meta: {
         access: ACCESS_ENUM.ADMIN,
       }

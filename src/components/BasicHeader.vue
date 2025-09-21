@@ -82,9 +82,19 @@ const originalItems = [
     title: '图片管理',
   },
   {
+    key: '/admin/spaceManage',
+    label: '空间管理',
+    title: '空间管理',
+  },
+  {
     key: '/add_picture',
     label: '图片创建',
     title: '图片创建',
+  },
+  {
+    key: '/add_space',
+    label: '空间创建',
+    title: '空间创建',
   },
   {
     key: '/others',

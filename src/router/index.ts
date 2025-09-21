@@ -12,6 +12,7 @@ import AddPicturePage from '@/pages/AddPicturePage.vue'
 import AddPictureBatchPage from '@/pages/AddPictureBatchPage.vue'
 import AdminSpaceManagePage from '@/pages/admin/AdminSpaceManagePage.vue'
 import AddSpacePage from '@/pages/AddSpacePage.vue'
+import MySpacePage from '@/pages/MySpacePage.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -70,6 +71,11 @@ const router = createRouter({
       meta:{
         access: ACCESS_ENUM.USER,
       }
+    },
+    {
+      path: '/my_space',
+      name: '我的空间',
+      component: MySpacePage,
     },
     {
       path: '/addBatch_picture',

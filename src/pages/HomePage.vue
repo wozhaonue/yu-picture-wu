@@ -167,11 +167,11 @@ const lazyLoading = () => {
         if (entry.isIntersecting) {
           const img = entry.target as HTMLImageElement
           const src = img.getAttribute('data-src')
-          console.log('开始加载图片:', src)
+          // console.log('开始加载图片:', src)
           if (src) {
             img.src = src
             img.onload = () => {
-              console.log('图片加载完成:', src)
+              // console.log('图片加载完成:', src)
             }
             img.onerror = () => {
               console.error('图片加载失败:', src)
@@ -354,5 +354,10 @@ onMounted(() => {
   background: #e6f7ff;
   color: #1890ff;
   border-color: #91d5ff;
+}
+#homePage .custom-pagination :deep(.ant-pagination){
+  margin: 0 auto;
+  width: 400px;
+  text-align: center;
 }
 </style>

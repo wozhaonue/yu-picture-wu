@@ -1,7 +1,7 @@
 <template>
   <div id="basicHeader">
     <a-row :wrap="false">
-      <a-col flex="200px">
+      <a-col flex="200px" style="margin-left: 16px;">
         <router-link to="/">
           <div class="title-bar">
             <img src="@images/favicon.ico" alt="网站logo" />
@@ -9,7 +9,7 @@
           </div>
         </router-link>
       </a-col>
-      <a-col flex="auto">
+      <a-col flex="auto" style="margin-left: -24px;">
         <a-menu
           @click="doMenuClick"
           v-model:selectedKeys="current"
@@ -31,7 +31,10 @@
               <template #overlay>
                 <a-menu>
                   <a-menu-item>
-                    <a-space> <AuditOutlined /><a @click="goToProfile">个人中心</a> </a-space>
+                    <a-space> <BlockOutlined /><a @click="goToMySpace">个人空间</a></a-space>
+                  </a-menu-item>
+                  <a-menu-item>
+                    <a-space> <AuditOutlined /><a @click="gotoProfile">个人中心</a> </a-space>
                   </a-menu-item>
                   <a-menu-item>
                     <a-space> <LogoutOutlined /><a @click="doLoginOut">退出登录</a> </a-space>
@@ -51,7 +54,7 @@
 
 <script lang="ts" setup>
 import { computed, h, ref } from 'vue'
-import { HomeOutlined, LogoutOutlined, AuditOutlined } from '@ant-design/icons-vue'
+import { HomeOutlined, LogoutOutlined, AuditOutlined,BlockOutlined } from '@ant-design/icons-vue'
 import { message, type MenuProps } from 'ant-design-vue'
 import { type RouteRecordRaw } from 'vue-router'
 import router from '@/router'
@@ -163,9 +166,15 @@ const doLoginOut = async () => {
   }
 }
 //个人中心
-const goToProfile = () => {
+const gotoProfile = () => {
   router.push({
-    path: '/user/profile',
+    path: '/user/profile'
+  })
+}
+//个人空间
+const goToMySpace = () => {
+  router.push({
+    path: '/my_space',
   })
 }
 </script>

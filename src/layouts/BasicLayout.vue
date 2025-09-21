@@ -1,15 +1,21 @@
 <template>
   <div id="basicLayout">
-    <a-layout style="min-height: 100vh;">
+    <a-layout style="min-height: 100vh">
       <a-layout-header class="header"><BasicHeader></BasicHeader></a-layout-header>
-      <a-layout-content class="content">
-         <a-config-provider :locale="zhCN">
-        <router-view></router-view>
-         </a-config-provider>
-      </a-layout-content>
+      <a-layout>
+        <BasicSider />
+        <a-layout-content class="content">
+          <a-config-provider :locale="zhCN">
+            <router-view></router-view>
+          </a-config-provider>
+        </a-layout-content>
+      </a-layout>
       <a-layout-footer class="footer">
-
-        <a href="https://github.com/wozhaonue/yu-picture-wu" target="_blank" rel="noopener noreferrer">
+        <a
+          href="https://github.com/wozhaonue/yu-picture-wu"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           相关代码仓库
         </a>
         |
@@ -20,8 +26,9 @@
 </template>
 
 <script setup lang="ts">
-import BasicHeader from '@/components/BasicHeader.vue';
-import zhCN from 'ant-design-vue/es/locale/zh_CN';
+import BasicHeader from '@/components/BasicHeader.vue'
+import BasicSider from '@/components/BasicSider.vue'
+import zhCN from 'ant-design-vue/es/locale/zh_CN'
 </script>
 
 <style scoped>
@@ -40,7 +47,7 @@ import zhCN from 'ant-design-vue/es/locale/zh_CN';
   border-radius: 0px;
   margin-top: auto;
 }
-#basicLayout .footer a{
+#basicLayout .footer a {
   color: #666;
   transition: color 0.3s ease;
 }
@@ -50,9 +57,10 @@ import zhCN from 'ant-design-vue/es/locale/zh_CN';
 #basicLayout .header {
   background-color: white;
   /* 添加阴影效果，创建层次感 */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(177, 177, 177, 0.1);
   /* 设置相对定位，确保阴影显示在内容区域上方 */
   position: relative;
+  padding-left: 0;
   z-index: 10;
   /* 可选：添加底部边框增强层次感 */
   border-bottom: 1px solid #f0f0f0;

@@ -1,6 +1,7 @@
 // @ts-ignore
 /* eslint-disable */
 import request from '@/request'
+import { random } from 'lodash'
 
 /** deletePicture POST /api/picture/delete */
 export async function deletePictureUsingPost(

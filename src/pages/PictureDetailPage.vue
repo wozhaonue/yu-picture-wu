@@ -62,6 +62,19 @@
             <a-descriptions-item label="大小">
               {{ formatSize(pictureData.picSize) }}
             </a-descriptions-item>
+            <a-descriptions-item label="主色调颜色">
+              <a-space>
+                {{ pictureData.picColor }}
+                <div
+                  v-if="pictureData.picColor"
+                  :style="{
+                    width: '16px',
+                    height: '16px',
+                    backgroundColor: toTextColor(pictureData.picColor),
+                  }"
+                ></div>
+              </a-space>
+            </a-descriptions-item>
           </a-descriptions>
           <a-space size="middle">
             <a-button v-if="isShowEditDelete()" type="primary" ghost @click="doEdit">编辑</a-button>
@@ -75,8 +88,15 @@
             >
               <a-button danger>删除</a-button>
             </a-popconfirm>
+            <a-button type="primary" @click="(e: MouseEvent) => doShare(pictureData, e)" ghost
+              >分享
+              <template #icon>
+                <share-alt-outlined /> </template
+            ></a-button>
+
             <a-button type="primary" @click="doDownLoad"><DownloadOutlined />免费下载</a-button>
           </a-space>
+          <ShareModal ref="shareModalRef" :link="shareLink" />
         </a-card>
       </a-col>
     </a-row>
@@ -84,17 +104,29 @@
 </template>
 
 <script setup lang="ts">
-import { DownloadOutlined } from '@ant-design/icons-vue'
-import { downloadFile, formatSize } from '@/utils'
+import { DownloadOutlined, ShareAltOutlined } from '@ant-design/icons-vue'
+import { downloadFile, formatSize, toTextColor } from '@/utils'
 import { deletePictureUsingPost, getPictureVoByIdUsingGet } from '@/api/pictureController'
 import { message } from 'ant-design-vue'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/user'
+import ShareModal from '@/components/ShareModal/ShareModal.vue'
 
+const shareModalRef = ref()
+const shareLink = ref<string>('')
 const pictureData = ref<API.PictureVO>({})
 const props = defineProps<{ id: string | number }>()
 const router = useRouter()
+
+// 分享按钮函数
+const doShare = (pictureData, e: MouseEvent) => {
+  e.stopPropagation()
+  shareLink.value = `${window.location.protocol}//${window.location.host}/picture/${pictureData.id}`
+  if (shareModalRef.value) {
+    shareModalRef.value.openModal()
+  }
+}
 /**
  * 获取图片详情
  */

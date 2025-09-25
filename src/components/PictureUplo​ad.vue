@@ -25,6 +25,7 @@ import { uploadPictureUsingPost } from '@/api/pictureController';
 interface Props {
   picture?: API.PictureVO,
   onSuccess?: (newPicture: API.PictureVO) => void,
+  spaceId?: string,
 }
 const props = defineProps<Props>();
 
@@ -38,6 +39,9 @@ const handleUpload = async ({file}:any) => {
   try{
     // 判断是否已经上传过图片本身来确定是否为更新图片
     const params = props.picture ? {id: props.picture.id} : {};
+    if(props.spaceId){
+      params.spaceId = props.spaceId;
+    }
     // console.log(params); 测试id是否正确
     const res = await uploadPictureUsingPost(params,{},file);
     if(res.data.code === 0 && res.data.data){
@@ -61,6 +65,7 @@ const beforeUpload = (file: UploadProps['fileList'][number]) => {
   const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
   if (!isJpgOrPng) {
     message.error('不支持上传该格式的图片，推荐使用jpg或png格式的图片');
+    return false;
   }
   const isLt2M = file.size / 1024 / 1024 < 2;
   if (!isLt2M) {

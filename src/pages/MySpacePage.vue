@@ -18,6 +18,7 @@ const LoginUserStore = useLoginUserStore();
 //重定向函数 -- 判断用户是否存在个人空间等来决定跳转页面
 const checkUserSpace = async() => {
   const loginuser = LoginUserStore.loginUser;
+  // 如果用户未登录，则重定向到登录页
   if(!loginuser?.id){
     router.replace('/user/login');
     return;
@@ -30,11 +31,12 @@ const checkUserSpace = async() => {
   })
   if(res.data.code === 0){
     console.log(res.data);
-
-    if(res.data.data?.records.length > 0){
-      const space = res.data.data.records[0];
+    const records = res.data.data?.records || [];
+    // 如果存在空间，则跳转到空间详情页
+    if(records.length > 0){
+      const space = records[0];
       router.replace(`/space/${space.id}`);
-    } else {
+    } else { // 否则跳转到创建空间页
       router.replace('/add_space');
       message.warn('请先创建空间');
     }

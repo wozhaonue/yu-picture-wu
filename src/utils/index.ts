@@ -26,7 +26,7 @@ export const downloadFile = async (url?: string, name?: string): Promise<boolean
   try {
     // 首先检查图片是否可访问
     const response = await fetch(url, { method: 'HEAD' })
-    
+
     if (!response.ok) {
       console.error('下载失败：图片资源不可访问', response.status)
       return false
@@ -34,13 +34,22 @@ export const downloadFile = async (url?: string, name?: string): Promise<boolean
 
     // 如果图片可访问，则开始下载
     saveAs(url, name)
-    
+
     // 由于saveAs是同步的，我们假设下载已经开始
     console.log('下载已开始：', url)
     return true
-    
+
   } catch (error) {
     console.error('下载失败：', error)
     return false
   }
+}
+
+/**
+ * 返回标准十六进制颜色hex
+ */
+export const toTextColor = (color:string) => {
+  const beforeHexText = color.startsWith('0x') ? color.slice(2) : color;
+  const hexText = parseInt(beforeHexText,16).toString().padStart(6,'0')
+  return `#${hexText}`
 }

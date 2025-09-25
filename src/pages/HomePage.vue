@@ -28,40 +28,8 @@
         </a-checkable-tag>
       </a-space>
     </div>
-    <div class="custom-picture-grid">
-      <div v-if="loading" class="loading-contaienr">
-        <div class="loading-spinner">加载中...</div>
-      </div>
-      <div v-else-if="loading === false && dataList.length !== 0" class="picture-grid">
-        <div
-          v-for="picture in dataList"
-          :key="picture.id"
-          @click="doClickPicture(picture)"
-          class="picture-card"
-        >
-          <!-- 图片封面 -->
-          <div class="picture-cover">
-            <img :src="picture.thumbnailUrl" />
-            <div class="picture-overlay">
-              <div class="overlay-content">
-                <h3 class="picture-title">{{ picture.name }}</h3>
-                <div class="picture-tags">
-                  <span v-if="picture.category" class="tag category-tag">
-                    {{ picture.category }}
-                  </span>
-                  <span v-for="tag in picture.tags" class="tag" :key="tag">
-                    {{ tag }}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div v-else class="empty-container">
-        <a-empty></a-empty>
-      </div>
-    </div>
+    <!-- 图片列表 -->
+    <PictureList :data-list="dataList" :loading="loading"/>
     <!-- 自定义分页组件 -->
     <div class="custom-pagination">
       <a-pagination
@@ -79,6 +47,7 @@ import {
   listPictureTagCategoryUsingGet,
   listPictureVoByPageUsingPost,
 } from '@/api/pictureController'
+import PictureList from '@/components/PictureList/PictureList.vue'
 import { message } from 'ant-design-vue'
 import {  onMounted, reactive, ref, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
@@ -138,16 +107,6 @@ const fetchData = async () => {
   loading.value = false
 }
 
-/**
- * 点击图片跳转到详情页
- * @param picture
- */
-const router = useRouter()
-const doClickPicture = (picture: API.PictureVO) => {
-  router.push({
-    path: `/picture/${picture.id}`,
-  })
-}
 const doSearch = () => {
   searchParams.current = 1
   fetchData()

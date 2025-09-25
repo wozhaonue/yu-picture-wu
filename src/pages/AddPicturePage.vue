@@ -3,13 +3,14 @@
     <h2 style="margin-bottom: 16px; text-align: left">
       {{ route?.query?.id ? '修改图片' : '创建图片' }}
     </h2>
+     <a-typography-paragraph v-if="spaceId" type="secondary">保存空间至：<a :href="`/space/${spaceId}`">{{ spaceId }}</a></a-typography-paragraph>
     <div class="choose-tabs">
       <a-tabs v-model:activeKey="activeKey">
     <a-tab-pane key="picture" tab="图片上传">
-      <PictureUpload :picture="picture" :onSuccess="onSuccess" />
+      <PictureUpload :picture="picture" :space-id="spaceId" :onSuccess="onSuccess" />
     </a-tab-pane>
     <a-tab-pane key="url" tab="URL上传" force-render>
-      <UrlPictureUpload :picture="picture" :onSuccess="onSuccess"/>
+      <UrlPictureUpload :picture="picture" :space-id="spaceId" :onSuccess="onSuccess"/>
     </a-tab-pane>
   </a-tabs>
     </div>
@@ -66,10 +67,13 @@ import {
 } from '@/api/pictureController'
 import PictureUpload from '@/components/PictureUplo​ad.vue'
 import { message } from 'ant-design-vue'
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import UrlPictureUpload from '@/components/urlPictureUpload.vue'
 
+const spaceId = computed(() => {
+  return route.query?.spaceId
+})
 const activeKey = ref<'picture' | 'url'>('picture');
 const route = useRoute()
 const router = useRouter()
@@ -104,6 +108,7 @@ const handleSubmit = async (value: API.PictureEditRequest) => {
   // 调用修改请求，然后赋值给表单model的数据
   const res = await editPictureUsingPost({
     id: picture.value.id,
+    spaceId: spaceId.value,
     ...value,
   })
   if (res.data.code === 0 && res.data.data) {

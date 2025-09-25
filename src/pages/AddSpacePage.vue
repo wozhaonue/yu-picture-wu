@@ -25,7 +25,7 @@
     </a-alert>
     <!-- 表单来提供创建空间的选项 -->
     <a-form layout="vertical" :model="formData" @finish="handleSubmit">
-      <a-form-item label="关键词" name="spaceLevel">
+      <a-form-item label="空间级别" name="spaceLevel">
         <a-select
           v-model:value="formData.spaceLevel"
           :options="SPACE_LEVEL_OPTIONS"
@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { addSpaceUsingPost, editSpaceUsingPost, getSpaceVoByIdUsingGet, listSpaceLevelUsingGet, updateSpaceUsingPost } from '@/api/spaceController'
+import { addSpaceUsingPost, getSpaceVoByIdUsingGet, listSpaceLevelUsingGet, updateSpaceUsingPost } from '@/api/spaceController'
 import { SPACE_LEVEL_ENUM, SPACE_LEVEL_OPTIONS } from '@/constants/space'
 import router from '@/router'
 import { formatSize } from '@/utils'
@@ -90,6 +90,7 @@ const handleSubmit = async () => {
 }
   if (res.data.code === 0 && res.data.data) {
     message.success('操作成功')
+    // 创建或修改成功则跳转到对应的空间详情页
     router.push({
       path: `/space/${route.query?.id ?? res.data.data}`,
     })

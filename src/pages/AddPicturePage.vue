@@ -3,16 +3,39 @@
     <h2 style="margin-bottom: 16px; text-align: left">
       {{ route?.query?.id ? '修改图片' : '创建图片' }}
     </h2>
-     <a-typography-paragraph v-if="spaceId" type="secondary">保存空间至：<a :href="`/space/${spaceId}`">{{ spaceId }}</a></a-typography-paragraph>
+    <a-typography-paragraph v-if="spaceId" type="secondary"
+      >保存空间至：<a :href="`/space/${spaceId}`">{{ spaceId }}</a></a-typography-paragraph
+    >
     <div class="choose-tabs">
       <a-tabs v-model:activeKey="activeKey">
-    <a-tab-pane key="picture" tab="图片上传">
-      <PictureUpload :picture="picture" :space-id="spaceId" :onSuccess="onSuccess" />
-    </a-tab-pane>
-    <a-tab-pane key="url" tab="URL上传" force-render>
-      <UrlPictureUpload :picture="picture" :space-id="spaceId" :onSuccess="onSuccess"/>
-    </a-tab-pane>
-  </a-tabs>
+        <a-tab-pane key="picture" tab="图片上传">
+          <PictureUpload
+            :picture="picture"
+            :img-url="picture?.url"
+            :space-id="spaceId"
+            :onSuccess="onSuccess"
+          />
+        </a-tab-pane>
+        <a-tab-pane key="url" tab="URL上传" force-render>
+          <UrlPictureUpload :picture="picture" :space-id="spaceId" :onSuccess="onSuccess" />
+        </a-tab-pane>
+      </a-tabs>
+      <a-flex style="margin-top: 12px; margin-bottom: 24px;" :gap="16" justify="center">
+         <a-button
+        v-if="picture?.url"
+        type="primary"
+        @click="(e: MouseEvent) => doEditModal(e)"
+        >编辑图片</a-button
+      >
+      <a-button
+        v-if="picture?.url"
+        type="primary"
+        @click="(e: MouseEvent) => doEnlargeModal(e)"
+        >AI扩图</a-button
+      >
+      </a-flex>
+      <EditPicture ref="editPictureRef" :img-url="picture?.url"  :picture="picture" :space-id="spaceId" :onSuccess="onSuccess"/>
+      <EnlargeImage ref="enLargeImageRef"  :img-url="picture?.url"  :picture="picture" :space-id="spaceId" :onSuccess="onSuccess"/>
     </div>
     <a-form
       v-if="picture"
@@ -60,6 +83,8 @@
 </template>
 
 <script setup lang="ts">
+import EditPicture from '@/components/EditPicture/EditPicture.vue'
+import EnlargeImage from '@/components/EnlargeImage/EnlargeImage.vue'
 import {
   editPictureUsingPost,
   getPictureVoByIdUsingGet,
@@ -71,10 +96,12 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import UrlPictureUpload from '@/components/urlPictureUpload.vue'
 
+const editPictureRef = ref();
+const enLargeImageRef = ref();
 const spaceId = computed(() => {
   return route.query?.spaceId
 })
-const activeKey = ref<'picture' | 'url'>('picture');
+const activeKey = ref<'picture' | 'url'>('picture')
 const route = useRoute()
 const router = useRouter()
 const pictureForm = reactive<API.PictureEditRequest>({} as API.PictureEditRequest)
@@ -112,12 +139,12 @@ const handleSubmit = async (value: API.PictureEditRequest) => {
     ...value,
   })
   if (res.data.code === 0 && res.data.data) {
-    message.success('创建成功')
+    message.success('操作成功')
     router.push({
       path: `/picture/${picture.value.id}`,
     })
   } else {
-    message.error('创建失败')
+    message.error('操作失败')
     console.error(res.data.message)
   }
 }
@@ -175,6 +202,24 @@ const getOldPicture = async () => {
         console.error(res.data.message)
       }
     }
+  }
+}
+/**
+ * 打开编辑图片弹窗
+ */
+const doEditModal = (e:MouseEvent) => {
+  e.stopPropagation();
+  if(editPictureRef.value){
+    editPictureRef.value.openModal();
+  }
+}
+/**
+ * 打开AI扩图弹窗
+ */
+const doEnlargeModal = (e:MouseEvent) => {
+  e.stopPropagation();
+  if(enLargeImageRef.value){
+    enLargeImageRef.value.openModal();
   }
 }
 onMounted(() => {

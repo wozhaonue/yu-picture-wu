@@ -48,7 +48,6 @@ const handleUpload = async() => {
   loading.value = false;
   }
 }
-
 </script>
 
 <style scoped>

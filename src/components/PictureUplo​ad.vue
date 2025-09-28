@@ -22,6 +22,7 @@ import { message } from 'ant-design-vue';
 import type { UploadProps } from 'ant-design-vue';
 import { uploadPictureUsingPost } from '@/api/pictureController';
 
+const editPictureRef = ref();
 interface Props {
   picture?: API.PictureVO,
   onSuccess?: (newPicture: API.PictureVO) => void,
@@ -73,6 +74,8 @@ const beforeUpload = (file: UploadProps['fileList'][number]) => {
   }
   return isJpgOrPng && isLt2M;
 };
+
+
 </script>
 <style scoped>
 /* 通过:deep进行下转来真正改变组件库中的样式 */

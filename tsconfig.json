@@ -19,6 +19,7 @@
       "@layouts/*": ["src/layouts/*"],
       "@router/*": ["src/router/*"],
       "@api/*": ["src/api/*"]
-    }
+    },
+    "types": ["node"]
   }
 }

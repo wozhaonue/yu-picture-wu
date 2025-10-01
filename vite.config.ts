@@ -32,6 +32,8 @@ export default defineConfig({
       '@pages': path.resolve(__dirname, 'src/pages'),
       '@stores': path.resolve(__dirname, 'src/stores'),
       '@layout': path.resolve(__dirname, 'src/layout'),
+      '@styles': path.resolve(__dirname,'src/styles'),
+      '@constants': path.resolve(__dirname,'src/constants'),
     },
   },
 })

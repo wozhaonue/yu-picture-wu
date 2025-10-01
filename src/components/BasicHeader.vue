@@ -18,6 +18,9 @@
         />
       </a-col>
       <a-col flex="100px">
+          <ThemeSwitch/>
+      </a-col>
+      <a-col flex="100px">
         <div class="login-place">
           <div v-if="loginUserStore.loginUser.id">
             <a-dropdown>
@@ -53,6 +56,7 @@
 </template>
 
 <script lang="ts" setup>
+import ThemeSwitch from './ThemeSwitch/ThemeSwitch.vue'
 import { computed, h, ref } from 'vue'
 import { HomeOutlined, LogoutOutlined, AuditOutlined,BlockOutlined } from '@ant-design/icons-vue'
 import { message, type MenuProps } from 'ant-design-vue'
@@ -62,6 +66,9 @@ import router from '@/router'
 import { useLoginUserStore } from '@/stores/user'
 import { userLogoutUsingPost } from '@/api/userController'
 import checkAccess from '@/access/checkAccess'
+import { useAppStore } from '@/stores/app'
+
+const app = useAppStore();
 const loginUserStore = useLoginUserStore()
 //远程获取登录状态
 loginUserStore.getLoginUser()

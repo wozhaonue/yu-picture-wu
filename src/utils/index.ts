@@ -1,4 +1,4 @@
-import { saveAs } from "file-saver"
+import { saveAs } from 'file-saver'
 
 /**
  * 格式化文件大小
@@ -9,6 +9,50 @@ export const formatSize = (size?: number) => {
   if (size < 1024) return size + ' B'
   if (size < 1024 * 1024) return (size / 1024).toFixed(2) + ' KB'
   return (size / (1024 * 1024)).toFixed(2) + ' MB'
+}
+// 设置文件大小单位的枚举数组
+const FILE_SIZE_ENUM = {
+  B: 1,
+  KB: 2,
+  MB: 3,
+}
+const FILE_SIZE_MAP: Record<string, string> = {
+  1: 'B',
+  2: 'KB',
+  3: 'MB',
+}
+/**
+ * 判断文件大小数组中最大的占用内存的单位
+ * @param sizeList
+ * @returns
+ */
+export const MaxSize = (sizeList?: number[]) => {
+  let size = FILE_SIZE_ENUM.KB
+  sizeList?.map((item) => {
+    if (item < 1024) {
+      size = size <= FILE_SIZE_ENUM.B ? FILE_SIZE_ENUM.B : size
+      return
+    }
+    if (item < 1024 * 1024) {
+      size = size !== FILE_SIZE_ENUM.KB ? FILE_SIZE_ENUM.KB : size
+      return
+    }
+    size = FILE_SIZE_ENUM.MB
+  })
+  return FILE_SIZE_MAP[size]
+}
+/**
+ * 返回最大的占用内存的单位下的size
+ * @param sizeName
+ * @returns
+ */
+export const whatSize = (size:number, sizeName: string) => {
+  if (sizeName === FILE_SIZE_MAP[1]) {
+    return size
+  } else if (sizeName === FILE_SIZE_MAP[2]) {
+    return (size / 1024).toFixed(2)
+  }
+  return (size / (1024 * 1024)).toFixed(2)
 }
 
 /**
@@ -38,7 +82,6 @@ export const downloadFile = async (url?: string, name?: string): Promise<boolean
     // 由于saveAs是同步的，我们假设下载已经开始
     console.log('下载已开始：', url)
     return true
-
   } catch (error) {
     console.error('下载失败：', error)
     return false
@@ -48,8 +91,8 @@ export const downloadFile = async (url?: string, name?: string): Promise<boolean
 /**
  * 返回标准十六进制颜色hex
  */
-export const toTextColor = (color:string) => {
-  const beforeHexText = color.startsWith('0x') ? color.slice(2) : color;
-  const hexText = parseInt(beforeHexText,16).toString().padStart(6,'0')
+export const toTextColor = (color: string) => {
+  const beforeHexText = color.startsWith('0x') ? color.slice(2) : color
+  const hexText = parseInt(beforeHexText, 16).toString().padStart(6, '0')
   return `#${hexText}`
 }

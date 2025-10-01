@@ -1,36 +1,27 @@
 <template>
   <div id="space-detail">
     <a-flex justify="space-between">
-      <h2>{{ spaceData.spaceName }}<span style="color: #263B81;"> 私有空间</span></h2>
-      <a-space size="middle">
+      <h2>{{ spaceData.spaceName }} {{ spaceData?.spaceLevel ? SPACE_LEVEL_MAP[spaceData?.spaceLevel] : SPACE_LEVEL_MAP[0] }}<span style="color: #263b81"> 私有空间</span></h2>
+      <a-space>
+        <a-button type="primary" ghost :href="`/user/spaceAnalysis?spaceId=${id}&queryAll=${false}&queryPublic=${false}`">空间分析</a-button>
         <a-button type="primary" :href="`/add_picture?spaceId=${id}`" target="_blank"
-          >+ 创建图片</a-button
-        >
-        <a-tooltip
-          placement="bottomRight"
-          :title="`占用空间 ${formatSize(spaceData.totalSize)}/${formatSize(spaceData.maxSize)}`"
-        >
-          <a-progress
-            type="circle"
-            :percent="
-              Number((
-                ((spaceData.totalSize ? spaceData.totalSize : 0) * 100) /
-                (spaceData.maxSize ? spaceData.maxSize : 1)
-              ).toFixed(1))
-            "
-            :size="42"
-          />
-        </a-tooltip>
+        >+ 创建图片</a-button
+      >
       </a-space>
     </a-flex>
-    <br>
-    <PictureSearchForm :onSearch="onSearch"/>
+    <br />
+    <PictureSearchForm :onSearch="onSearch" />
     <a-form-item label="按颜色搜索" style="margin-top: 16px">
-      <colorPicker format="hex" @pureColorChange="onColorchange"/>
+      <colorPicker format="hex" @pureColorChange="onColorchange" />
     </a-form-item>
     <a-button :icon="h(EditOutlined)" type="primary" @click="doBatchEdit">批量处理</a-button>
-    <BatchEditPicture ref="batchEditPictureRef" :picture-list="dataList" :space-id="id" :onSuccess="fetchData"/>
-    <br>
+    <BatchEditPicture
+      ref="batchEditPictureRef"
+      :picture-list="dataList"
+      :space-id="id"
+      :onSuccess="fetchData"
+    />
+    <br />
     <PictureList :data-list="dataList" :loading="loading" :showop="true" :onReload="fetchData" />
     <!-- 自定义分页组件 -->
     <div class="custom-pagination">
@@ -46,17 +37,20 @@
 
 <script setup lang="ts">
 import BatchEditPicture from '@/components/BatchEditPicture/BatchEditPicture.vue'
-import { listPictureVoByPageUsingPost, searchPictureByColorUsingPost } from '@/api/pictureController'
+import {
+  listPictureVoByPageUsingPost,
+  searchPictureByColorUsingPost,
+} from '@/api/pictureController'
 import { getSpaceVoByIdUsingGet } from '@/api/spaceController'
-import { formatSize } from '@/utils'
 import PictureList from '@/components/PictureList/PictureList.vue'
 import { message } from 'ant-design-vue'
 import { ColorPicker } from 'vue3-colorpicker'
-import "vue3-colorpicker/style.css";
+import 'vue3-colorpicker/style.css'
 import { h, nextTick, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PictureSearchForm from '@/components/PictureSearchForm.vue'
 import { EditOutlined } from '@ant-design/icons-vue'
+import { SPACE_LEVEL_MAP } from '../constants/space';
 const batchEditPictureRef = ref()
 const spaceData = ref<API.SpaceVO>({})
 const props = defineProps<{ id: string | number }>()
@@ -180,30 +174,30 @@ const onSearch = (newSearchParams: API.PictureQueryRequest) => {
     ...newSearchParams,
     current: 1,
   }
-  fetchData();
+  fetchData()
 }
 /**
  * 按颜色搜索
  */
-const onColorchange = async(color:string) => {
+const onColorchange = async (color: string) => {
   loading.value = true
   const res = await searchPictureByColorUsingPost({
     picColor: color,
     spaceId: props.id,
   })
-  if(res.data.code === 0 && res.data.data){
+  if (res.data.code === 0 && res.data.data) {
     dataList.value = res.data.data ?? []
     total.value = res.data.data.length
-  }else{
-    message.error('搜索失败');
-    console.error('搜索失败',res.data.message);
+  } else {
+    message.error('搜索失败')
+    console.error('搜索失败', res.data.message)
   }
   loading.value = false
 }
 
 // 批量处理
 const doBatchEdit = () => {
-  if(batchEditPictureRef.value){
+  if (batchEditPictureRef.value) {
     batchEditPictureRef.value.openModal()
   }
 }
@@ -216,7 +210,7 @@ onMounted(() => {
 #space-detail {
   padding: 16px;
 }
-#space-detail .custom-pagination :deep(.ant-pagination){
+#space-detail .custom-pagination :deep(.ant-pagination) {
   margin: 0 auto;
   width: 400px;
   text-align: center;

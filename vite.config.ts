@@ -9,6 +9,21 @@ export default defineConfig({
     vue(),
     vueDevTools(),
   ],
+  css: {
+    // 预处理器选项
+    preprocessorOptions: {
+      // 针对 'scss' (或 'sass') 设置
+      scss: {
+        // *** 关键修改在这里 ***
+        // 强制 Sass 使用现代 JS API
+        api: 'modern-compiler',
+      },
+      // 如果你使用的是 .sass 语法（缩进语法），则需要配置 'sass'
+      // sass: {
+      //   api: 'modern-compiler',
+      // },
+    },
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

@@ -37,15 +37,17 @@
 import { getSpaceUsageAnalyzeUsingPost } from '@/api/spaceAnalyzeController';
 import { formatSize } from '@/utils';
 import { message } from 'ant-design-vue';
-import { onMounted, ref, watchEffect } from 'vue';
+import { onMounted, ref } from 'vue';
 
 interface Props {
   spaceId?: number
   queryAll?: boolean
+  isAdmin?: boolean
   queryPublic?: boolean
 }
 const props = withDefaults(defineProps<Props>(),{
   queryAll: false,
+  isAdmin: false,
   queryPublic: false,
 });
 const spaceAnalysisData = ref<API.SpaceUsageAnalyzeResponse>({});
@@ -55,7 +57,7 @@ const spaceAnalysisData = ref<API.SpaceUsageAnalyzeResponse>({});
  */
 const getSpaceDetail = async () => {
   // 如果没有接收到id
-  if (!props?.spaceId) {
+  if (!props?.spaceId && !props?.isAdmin) {
     // 回退到上一个页面
     message.error('获取空间详情失败');
     return
@@ -77,9 +79,6 @@ const getSpaceDetail = async () => {
     console.error(res.data.message)
   }
 }
-watchEffect(() => {
-  getSpaceDetail();
-})
 onMounted(() => {
   getSpaceDetail();
 })

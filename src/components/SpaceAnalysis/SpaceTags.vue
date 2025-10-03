@@ -1,20 +1,21 @@
 <template>
   <div class="space-category">
     <a-card :bordered="false" title="空间图片标签分析" :headStyle="{'text-align': 'center','font-size': '1.2rem'}">
-      <v-chart class="chart" :option="option" :theme="isDark ? 'dark' : 'light'" autoresize />
+      <v-chart class="chart" :option="option" :theme="app.darkMode === 'dark' ? 'dark' : 'light'" autoresize />
     </a-card>
   </div>
 </template>
 
 <script setup lang="ts">
 //echart内容
-// import 'echarts-wordcloud';
+import 'echarts-wordcloud';
+import 'echarts'
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { BarChart } from 'echarts/charts'
-import { getSpaceCategoryAnalyzeUsingPost } from '@/api/spaceAnalyzeController'
+import {  getSpaceTagAnalyzeUsingPost } from '@/api/spaceAnalyzeController'
 import { message } from 'ant-design-vue'
-import { computed, onMounted, provide, ref, watchEffect } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import {
   TitleComponent,
   TooltipComponent,
@@ -22,9 +23,8 @@ import {
   GridComponent,
   DataZoomComponent,
 } from 'echarts/components'
-import VChart, { THEME_KEY } from 'vue-echarts'
-import { MaxSize, whatSize } from '@/utils'
-
+import VChart from 'vue-echarts'
+import { useAppStore } from '@/stores/app';
 // 注册必要的组件
 use([
   CanvasRenderer,
@@ -36,52 +36,41 @@ use([
   DataZoomComponent,
 ])
 // 主题配置
-const isDark = ref(false)
-provide(THEME_KEY, isDark.value ? 'dark' : 'light')
+const app = useAppStore()
+
 interface Props {
   spaceId?: number
   queryAll?: boolean
+  isAdmin?: boolean
   queryPublic?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   queryAll: false,
+  isAdmin: false,
   queryPublic: false,
 })
-const spaceAnalysisData = ref<API.SpaceCategoryAnalyzeResponse[]>([])
-const dataName = computed(() => {
-  return spaceAnalysisData.value.map((item) => {
-    return item.category
-  })
-})
-const dataCountList = computed(() => {
-  return spaceAnalysisData.value.map((item) => {
-    return item.count
-  })
-})
-const dataSizetList = computed(() => {
-  return spaceAnalysisData.value.map((item) => {
-    return item.totalSize
-  })
-})
-const maxSizeuUit = computed(() => MaxSize(dataSizetList.value));
-const calDataSizeList = computed(() => {
-  return dataSizetList.value.map((item) => {
-    return whatSize(item, maxSizeuUit.value);
-  })
-})
+const spaceAnalysisData = ref<API.SpaceTagAnalyzeResponse[]>([])
 
+const showTagData = computed(() => {
+  return spaceAnalysisData.value.map((item) => {
+    return {
+      value: item.count,
+      name: item.tag
+    }
+  })
+})
 /**
  * 获取空间详情
  */
 const getSpaceDetail = async () => {
   // 如果没有接收到id
-  if (!props?.spaceId) {
+  if (!props?.spaceId && !props?.isAdmin) {
     // 回退到上一个页面
     message.error('获取空间详情失败')
     return
   }
   // 远程请求图片信息
-  const res = await getSpaceCategoryAnalyzeUsingPost({
+  const res = await getSpaceTagAnalyzeUsingPost({
     spaceId: props.spaceId,
     queryAll: props.queryAll,
     queryPublic: props.queryPublic,
@@ -105,24 +94,10 @@ const option = computed(() => ({
     {
         type: 'wordCloud',
 
-        // The shape of the "cloud" to draw. Can be any polar equation represented as a
-        // callback function, or a keyword present. Available presents are circle (default),
-        // cardioid (apple or heart shape curve, the most known polar equation), diamond (
-        // alias of square), triangle-forward, triangle, (alias of triangle-upright, pentagon, and star.
-
         shape: 'circle',
-
-        // Keep aspect ratio of maskImage or 1:1 for shapes
-        // This option is supported since echarts-wordcloud@2.1.0
         keepAspect: false,
 
-        // A silhouette image which the white area will be excluded from drawing texts.
-        // The shape option will continue to apply as the shape of the cloud to grow.
-
-        maskImage: maskImage,
-
-        // Folllowing left/top/width/height/right/bottom are used for positioning the word cloud
-        // Default to be put in the center and has 75% x 80% size.
+        // maskImage: maskImage,
 
         left: 'center',
         top: 'center',
@@ -131,43 +106,26 @@ const option = computed(() => ({
         right: null,
         bottom: null,
 
-        // Text size range which the value in data will be mapped to.
-        // Default to have minimum 12px and maximum 60px size.
 
-        sizeRange: [12, 60],
+        sizeRange: [8, 50],
 
-        // Text rotation range and step in degree. Text will be rotated randomly in range [-90, 90] by rotationStep 45
 
-        rotationRange: [-90, 90],
+        rotationRange: [-30, 30],
         rotationStep: 45,
 
-        // size of the grid in pixels for marking the availability of the canvas
-        // the larger the grid size, the bigger the gap between words.
 
-        gridSize: 8,
+        gridSize: 20,
 
-        // set to true to allow word to be drawn partly outside of the canvas.
-        // Allow word bigger than the size of the canvas to be drawn
-        // This option is supported since echarts-wordcloud@2.1.0
         drawOutOfBound: false,
 
-        // if the font size is too large for the text to be displayed,
-        // whether to shrink the text. If it is set to false, the text will
-        // not be rendered. If it is set to true, the text will be shrinked.
-        // This option is supported since echarts-wordcloud@2.1.0
         shrinkToFit: false,
 
-        // If perform layout animation.
-        // NOTE disable it will lead to UI blocking when there is lots of words.
         layoutAnimation: true,
 
-        // Global text style
         textStyle: {
             fontFamily: 'sans-serif',
             fontWeight: 'bold',
-            // Color can be a callback function or a color string
             color: function () {
-                // Random color
                 return 'rgb(' + [
                     Math.round(Math.random() * 160),
                     Math.round(Math.random() * 160),
@@ -177,27 +135,16 @@ const option = computed(() => ({
         },
         emphasis: {
             focus: 'self',
-
             textStyle: {
-                textShadowBlur: 10,
-                textShadowColor: '#333'
+                textShadowBlur: 5,
+                textShadowColor: '#82E1DB'
             }
         },
 
-        // Data is an array. Each array item must have name and value property.
-        data: [{
-            name: 'Farrah Abraham',
-            value: 366,
-            // Style of single text
-            textStyle: {
-            }
-        }]
+        data: showTagData.value
 
  } ],
 }))
-watchEffect(() => {
-  getSpaceDetail()
-})
 onMounted(() => {
   getSpaceDetail()
 })

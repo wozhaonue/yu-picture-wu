@@ -1,13 +1,13 @@
 <template>
   <div class="space-different-size">
-     <v-chart class="chart" :option="option" autoresize />
+     <v-chart class="chart" :option="option" :theme="app.darkMode === 'dark' ? 'dark' : 'light'" autoresize />
   </div>
 </template>
 
 <script setup lang="ts">
 import { getSpaceSizeAnalyzeUsingPost } from '@/api/spaceAnalyzeController';
 import { message } from 'ant-design-vue';
-import { onMounted, ref,provide, computed, watchEffect } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { PieChart } from 'echarts/charts';
@@ -16,7 +16,8 @@ import {
   TooltipComponent,
   LegendComponent,
 } from 'echarts/components';
-import VChart, { THEME_KEY } from 'vue-echarts';
+import VChart from 'vue-echarts';
+import { useAppStore } from '@/stores/app';
 
 use([
   CanvasRenderer,
@@ -26,7 +27,7 @@ use([
   LegendComponent,
 ]);
 
-provide(THEME_KEY, 'light');
+const app = useAppStore();
 
 
 //echart内容
@@ -35,10 +36,12 @@ provide(THEME_KEY, 'light');
 interface Props {
   spaceId?: number
   queryAll?: boolean
+  isAdmin?: boolean
   queryPublic?: boolean
 }
 const props = withDefaults(defineProps<Props>(),{
   queryAll: false,
+  isAdmin: false,
   queryPublic: false,
 });
 const spaceAnalysisData = ref<API.SpaceSizeAnalyzeResponse[]>([]);
@@ -61,7 +64,7 @@ const dataList = computed(() => {
  */
 const getSpaceDetail = async () => {
   // 如果没有接收到id
-  if (!props?.spaceId) {
+  if (!props?.spaceId && !props?.isAdmin) {
     // 回退到上一个页面
     message.error('获取空间详情失败');
     return
@@ -83,7 +86,7 @@ const getSpaceDetail = async () => {
     console.error(res.data.message)
   }
 }
-const option = ref({
+const option = computed(() => ({
   title: {
     text: '不同图片大小的数量占比',
     left: 'center',
@@ -95,7 +98,7 @@ const option = ref({
   legend: {
     orient: 'vertical',
     left: 'left',
-    data: dataName,
+    data: dataName.value,
   },
   series: [
     {
@@ -103,7 +106,7 @@ const option = ref({
       type: 'pie',
       radius: '55%',
       center: ['50%', '60%'],
-      data: dataList,
+      data: dataList.value,
       emphasis: {
         itemStyle: {
           shadowBlur: 10,
@@ -113,10 +116,8 @@ const option = ref({
       },
     },
   ],
-});
-watchEffect(() => {
-  getSpaceDetail();
-})
+}));
+
 onMounted(() => {
   getSpaceDetail();
 })

@@ -1,18 +1,18 @@
 <template>
-  <div class="space-category">
-    <a-card :bordered="false" title="空间图片分类分析" :headStyle="{'text-align': 'center','font-size': '1.2rem'}">
+  <div class="space-occupancy-admin">
+    <a-card :bordered="false" title="空间占用分析" :headStyle="{'text-align': 'center','font-size': '1.2rem'}">
       <v-chart class="chart" :option="option" :theme="app.darkMode === 'dark' ? 'dark' : 'light'" autoresize />
     </a-card>
   </div>
 </template>
 
 <script setup lang="ts">
+import { getSpaceUsageAnalyzeUsingPost } from '@/api/spaceAnalyzeController';
+import { message } from 'ant-design-vue';
 //echart内容
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { BarChart } from 'echarts/charts'
-import { getSpaceCategoryAnalyzeUsingPost } from '@/api/spaceAnalyzeController'
-import { message } from 'ant-design-vue'
 import { computed, onMounted, ref } from 'vue'
 import {
   TitleComponent,
@@ -22,9 +22,7 @@ import {
   DataZoomComponent,
 } from 'echarts/components'
 import VChart from 'vue-echarts'
-import { MaxSize, whatSize } from '@/utils'
 import { useAppStore } from '@/stores/app'
-
 // 注册必要的组件
 use([
   CanvasRenderer,
@@ -40,36 +38,15 @@ const app =useAppStore();
 interface Props {
   spaceId?: number
   queryAll?: boolean
-  queryPublic?: boolean
   isAdmin?: boolean
+  queryPublic?: boolean
 }
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(),{
   queryAll: false,
-  queryPublic: false,
   isAdmin: false,
-})
-const spaceAnalysisData = ref<API.SpaceCategoryAnalyzeResponse[]>([])
-const dataName = computed(() => {
-  return spaceAnalysisData.value.map((item) => {
-    return item.category
-  })
-})
-const dataCountList = computed(() => {
-  return spaceAnalysisData.value.map((item) => {
-    return item.count
-  })
-})
-const dataSizetList = computed(() => {
-  return spaceAnalysisData.value.map((item) => {
-    return item.totalSize
-  })
-})
-const maxSizeuUit = computed(() => MaxSize(dataSizetList.value));
-const calDataSizeList = computed(() => {
-  return dataSizetList.value.map((item) => {
-    return whatSize(item, maxSizeuUit.value);
-  })
-})
+  queryPublic: false,
+});
+const spaceAnalysisData = ref<API.SpaceUsageAnalyzeResponse>({});
 
 /**
  * 获取空间详情
@@ -78,11 +55,11 @@ const getSpaceDetail = async () => {
   // 如果没有接收到id
   if (!props?.spaceId && !props?.isAdmin) {
     // 回退到上一个页面
-    message.error('获取空间详情失败')
+    message.error('获取空间详情失败');
     return
   }
   // 远程请求图片信息
-  const res = await getSpaceCategoryAnalyzeUsingPost({
+  const res = await getSpaceUsageAnalyzeUsingPost({
     spaceId: props.spaceId,
     queryAll: props.queryAll,
     queryPublic: props.queryPublic,
@@ -90,18 +67,25 @@ const getSpaceDetail = async () => {
   // 如果请求成功，则进行赋值
   if (res.data.code === 0 && res.data.data) {
     // message.success('获取成功')
-    const data = res.data.data ?? []
+    const data = res.data.data
     spaceAnalysisData.value = data
-    console.log(spaceAnalysisData.value)
+    // console.log(pictureData.value)
   } else {
     // message.error('获取失败')
     console.error(res.data.message)
   }
 }
-
 const colors = ['#5070dd', '#b6d634', '#505372']
 // 多系列柱状图配置
-const option = computed(() => ({
+const option = computed(() => {
+  const dataCountList = computed(() => {
+    return [spaceAnalysisData.value.usedCount || 0];
+  })
+  const calDataSizeList = computed(() => {
+    const sizeInMB = (Number(spaceAnalysisData.value.usedSize || 0) / (1024 * 1024)).toFixed(2);
+    return [Number(sizeInMB)];
+  })
+  return {
   color: colors,
   // 工具提示
   tooltip: {
@@ -119,7 +103,7 @@ const option = computed(() => ({
   // X轴配置
   xAxis: {
     type: 'category',
-    data: dataName.value,
+    data: props.queryAll === true ? ['全部空间'] : ['公共图库'],
     axisTick: {
       alignWithLabel: true,
     },
@@ -156,9 +140,7 @@ const option = computed(() => ({
         },
       },
       axisLabel: {
-        formatter: function (value: string) {
-          return value + ' ' + maxSizeuUit.value
-        }
+        formatter: '{value}MB',
       },
     },
   ],
@@ -183,15 +165,16 @@ const option = computed(() => ({
       },
     },
   ],
-}))
+}
+}
+)
 onMounted(() => {
-  getSpaceDetail()
+  getSpaceDetail();
 })
 </script>
 
 <style scoped>
-.space-category .chart {
+.space-occupancy-admin .chart {
   height: 320px;
-  max-width: 100%;
 }
 </style>

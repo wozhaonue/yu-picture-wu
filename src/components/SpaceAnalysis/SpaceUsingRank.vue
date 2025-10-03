@@ -1,7 +1,24 @@
 <template>
-  <div class="space-category">
-    <a-card :bordered="false" title="空间图片分类分析" :headStyle="{'text-align': 'center','font-size': '1.2rem'}">
-      <v-chart class="chart" :option="option" :theme="app.darkMode === 'dark' ? 'dark' : 'light'" autoresize />
+  <div class="space-using-rank">
+    <a-card
+      :bordered="false"
+      title="空间使用情况排行"
+      :headStyle="{ 'text-align': 'center', 'font-size': '1.2rem' }"
+    >
+      <template #extra>
+        <a-input-search
+          placeholder="输入查询的条数"
+          enter-button="搜索排行"
+          size="middle"
+          @search="onSearch"
+        />
+      </template>
+      <v-chart
+        class="chart"
+        :option="option"
+        :theme="app.darkMode === 'dark' ? 'dark' : 'light'"
+        autoresize
+      />
     </a-card>
   </div>
 </template>
@@ -11,9 +28,9 @@
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { BarChart } from 'echarts/charts'
-import { getSpaceCategoryAnalyzeUsingPost } from '@/api/spaceAnalyzeController'
+import { getSpaceRankAnalyzeUsingPost } from '@/api/spaceAnalyzeController'
 import { message } from 'ant-design-vue'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import {
   TitleComponent,
   TooltipComponent,
@@ -22,7 +39,6 @@ import {
   DataZoomComponent,
 } from 'echarts/components'
 import VChart from 'vue-echarts'
-import { MaxSize, whatSize } from '@/utils'
 import { useAppStore } from '@/stores/app'
 
 // 注册必要的组件
@@ -36,40 +52,20 @@ use([
   DataZoomComponent,
 ])
 // 主题配置
-const app =useAppStore();
+const app = useAppStore()
+const topNData = ref<number>(10)
 interface Props {
   spaceId?: number
   queryAll?: boolean
+  isAdmin: false,
   queryPublic?: boolean
-  isAdmin?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   queryAll: false,
-  queryPublic: false,
   isAdmin: false,
+  queryPublic: false,
 })
-const spaceAnalysisData = ref<API.SpaceCategoryAnalyzeResponse[]>([])
-const dataName = computed(() => {
-  return spaceAnalysisData.value.map((item) => {
-    return item.category
-  })
-})
-const dataCountList = computed(() => {
-  return spaceAnalysisData.value.map((item) => {
-    return item.count
-  })
-})
-const dataSizetList = computed(() => {
-  return spaceAnalysisData.value.map((item) => {
-    return item.totalSize
-  })
-})
-const maxSizeuUit = computed(() => MaxSize(dataSizetList.value));
-const calDataSizeList = computed(() => {
-  return dataSizetList.value.map((item) => {
-    return whatSize(item, maxSizeuUit.value);
-  })
-})
+const spaceAnalysisData = ref<API.Space[]>([])
 
 /**
  * 获取空间详情
@@ -82,10 +78,8 @@ const getSpaceDetail = async () => {
     return
   }
   // 远程请求图片信息
-  const res = await getSpaceCategoryAnalyzeUsingPost({
-    spaceId: props.spaceId,
-    queryAll: props.queryAll,
-    queryPublic: props.queryPublic,
+  const res = await getSpaceRankAnalyzeUsingPost({
+    topN: topNData.value,
   })
   // 如果请求成功，则进行赋值
   if (res.data.code === 0 && res.data.data) {
@@ -101,7 +95,10 @@ const getSpaceDetail = async () => {
 
 const colors = ['#5070dd', '#b6d634', '#505372']
 // 多系列柱状图配置
-const option = computed(() => ({
+const option = computed(() =>{
+  const spaceName = spaceAnalysisData.value.map((item) => item.spaceName);
+  const usageData = spaceAnalysisData.value.map((item) => (item.totalSize / (1024* 1024)).toFixed(2))
+  return {
   color: colors,
   // 工具提示
   tooltip: {
@@ -110,16 +107,10 @@ const option = computed(() => ({
       type: 'cross',
     },
   },
-  // 图例
-  legend: {
-    data: ['图片数量', '总大小'],
-    bottm: '12%',
-    left: 'center',
-  },
   // X轴配置
   xAxis: {
     type: 'category',
-    data: dataName.value,
+    data: spaceName,
     axisTick: {
       alignWithLabel: true,
     },
@@ -128,7 +119,7 @@ const option = computed(() => ({
   yAxis: [
     {
       type: 'value',
-      name: '图片数量',
+      name: '空间使用量(MB)',
       position: 'left',
       alignTicks: true,
       minInterval: 1,
@@ -140,25 +131,7 @@ const option = computed(() => ({
         },
       },
       axisLabel: {
-        formatter: '{value} 张',
-      },
-    },
-    {
-      type: 'value',
-      name: '总大小',
-      position: 'right',
-      alignTicks: true,
-      axisLine: {
-        onZero: false,
-        show: true,
-        lineStyle: {
-          color: colors[1],
-        },
-      },
-      axisLabel: {
-        formatter: function (value: string) {
-          return value + ' ' + maxSizeuUit.value
-        }
+        formatter: '{value}MB',
       },
     },
   ],
@@ -166,31 +139,34 @@ const option = computed(() => ({
   // 系列数据
   series: [
     {
-      name: '图片数量',
+      name: '空间使用量(MB)',
       type: 'bar',
-      data: dataCountList.value,
+      data: usageData,
       itemStyle: {
         color: '#5470c6',
       },
     },
-    {
-      name: '总大小',
-      type: 'bar',
-      data: calDataSizeList.value,
-      yAxisIndex: 1,
-      itemStyle: {
-        color: '#91cc75',
-      },
-    },
   ],
-}))
+}
+})
+const onSearch = (value: number) => {
+  if(isNaN(Number(value))){
+    message.error('输入不为有效数字，请重新输入');
+    return;
+  }
+  topNData.value = value;
+}
+watch(topNData, () => {
+  getSpaceDetail()
+}, { immediate: false })
+
 onMounted(() => {
   getSpaceDetail()
 })
 </script>
 
 <style scoped>
-.space-category .chart {
+.space-using-rank .chart {
   height: 320px;
   max-width: 100%;
 }

@@ -3,6 +3,8 @@
     <a-flex justify="space-between" style="margin-bottom: 16px;">
       <h2>空间管理</h2>
       <a-space>
+        <a-button type="primary" ghost :href="`/user/spaceAnalysis?queryAll=true`" target="_blank">全部空间分析</a-button>
+        <a-button type="primary" ghost :href="`/user/spaceAnalysis?queryPublic=true`" target="_blank">公共空间分析</a-button>
         <a-button type="primary" href="/add_space" target="_blank"><PlusOutlined />创建图片</a-button>
       </a-space>
     </a-flex>
@@ -58,6 +60,9 @@
   </template>
   <template v-else-if="column.key === 'action'">
     <a-space wrap>
+      <a-button type="link" :href="`/user/spaceAnalysis?spaceId=${record.id}`" target="_blank">
+        分析
+      </a-button>
       <a-button type="link" :href="`/add_space?id=${record.id}`" target="_blank">
         编辑
       </a-button>

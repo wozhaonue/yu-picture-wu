@@ -14,6 +14,7 @@ router.beforeEach(async(to,from,next) => {
     loginUser = loginUserStore.loginUser;
     firstFetch = false;
   }
+  // 获取跳转地址需要的用户权限等级
   const needAccess = (to.meta?.access as string) ?? ACCESS_ENUM.NOT_LOGIN;
 
   // 要跳转的页面必须登录

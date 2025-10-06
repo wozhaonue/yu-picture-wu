@@ -1,12 +1,29 @@
 <template>
   <div id="space-detail">
     <a-flex justify="space-between">
-      <h2>{{ spaceData.spaceName }} {{ spaceData?.spaceLevel ? SPACE_LEVEL_MAP[spaceData?.spaceLevel] : SPACE_LEVEL_MAP[0] }}<span style="color: #263b81"> 私有空间</span></h2>
+      <h2>
+        {{ spaceData.spaceName }}
+        {{ spaceData?.spaceLevel ? SPACE_LEVEL_MAP[spaceData?.spaceLevel] : SPACE_LEVEL_MAP[0]
+        }}<a-tag size="big" color="green" >{{ SPACE_TYPE_MAP[spaceType] }}</a-tag>
+      </h2>
       <a-space>
-        <a-button type="primary" ghost :href="`/user/spaceAnalysis?spaceId=${id}&queryAll=${false}&queryPublic=${false}`">空间分析</a-button>
-        <a-button type="primary" :href="`/add_picture?spaceId=${id}`" target="_blank"
-        >+ 创建图片</a-button
-      >
+         <a-button
+          v-if="canManagerSpaceUser && !isPrivateSpacce"
+          type="primary"
+          ghost
+          :href="`/spaceUserManage/${id}`"
+          target="_blank"
+          >成员管理</a-button
+        >
+        <a-button
+          type="primary"
+          ghost
+          :href="`/user/spaceAnalysis?spaceId=${id}&queryAll=${false}&queryPublic=${false}`"
+          >空间分析</a-button
+        >
+        <a-button v-if="canUploadPicture" type="primary" :href="`/add_picture?spaceId=${id}`" target="_blank"
+          >+ 创建图片</a-button
+        >
       </a-space>
     </a-flex>
     <br />
@@ -14,7 +31,7 @@
     <a-form-item label="按颜色搜索" style="margin-top: 16px">
       <colorPicker format="hex" @pureColorChange="onColorchange" />
     </a-form-item>
-    <a-button :icon="h(EditOutlined)" type="primary" @click="doBatchEdit">批量处理</a-button>
+    <a-button v-if="canEditPicture" :icon="h(EditOutlined)" type="primary" @click="doBatchEdit">批量处理</a-button>
     <BatchEditPicture
       ref="batchEditPictureRef"
       :picture-list="dataList"
@@ -22,7 +39,7 @@
       :onSuccess="fetchData"
     />
     <br />
-    <PictureList :data-list="dataList" :loading="loading" :showop="true" :onReload="fetchData" />
+    <PictureList :can-delete="canDeletePicture" :can-edit="canEditPicture" :data-list="dataList" :loading="loading" :showop="true" :onReload="fetchData" />
     <!-- 自定义分页组件 -->
     <div class="custom-pagination">
       <a-pagination
@@ -46,15 +63,23 @@ import PictureList from '@/components/PictureList/PictureList.vue'
 import { message } from 'ant-design-vue'
 import { ColorPicker } from 'vue3-colorpicker'
 import 'vue3-colorpicker/style.css'
-import { h, nextTick, onMounted, ref } from 'vue'
+import { computed, h, nextTick, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import PictureSearchForm from '@/components/PictureSearchForm.vue'
 import { EditOutlined } from '@ant-design/icons-vue'
-import { SPACE_LEVEL_MAP } from '../constants/space';
+import { SPACE_LEVEL_MAP } from '../constants/space'
+import { useLoginUserStore } from '@/stores/user'
+import { SPACE_PERMISSION_ENUM, SPACE_TYPE_ENUM, SPACE_TYPE_MAP } from '@/constants/teamSpace'
+// 获取用户信息
+const userStore = useLoginUserStore()
+const userId = userStore.loginUser.id
 const batchEditPictureRef = ref()
 const spaceData = ref<API.SpaceVO>({})
 const props = defineProps<{ id: string | number }>()
 const router = useRouter()
+const spaceType = computed(() => {
+  return spaceData.value.spaceType ?? SPACE_TYPE_ENUM.PRIVATE;
+})
 /**
  * 获取空间详情
  */
@@ -65,7 +90,7 @@ const getSpaceDetail = async () => {
     router.back()
     return
   }
-  // 远程请求图片信息
+  // 远程请求空间信息
   const res = await getSpaceVoByIdUsingGet({
     id: props.id,
   })
@@ -73,7 +98,14 @@ const getSpaceDetail = async () => {
   if (res.data.code === 0 && res.data.data) {
     // message.success('获取成功')
     const data = res.data.data
-    spaceData.value = data
+    // 判断当前用户是否为该私有空间的人
+    if (userId === data.user?.id || data.spaceType === SPACE_TYPE_ENUM.TEAM) {
+      spaceData.value = data
+    } else {
+      message.error('没有访问权限')
+      router.push('/')
+    }
+
     // console.log(pictureData.value)
   } else {
     // message.error('获取失败')
@@ -201,7 +233,25 @@ const doBatchEdit = () => {
     batchEditPictureRef.value.openModal()
   }
 }
+// 监听路由参数变化，当从一个空间详情页跳转到另一个空间详情页时重新加载数据
+watch(() => props.id, (newSpaceId) => {
+  if (newSpaceId) {
+    getSpaceDetail();
+    fetchData();
+  }
+}, { immediate: false })
+// 通用权限检查函数
+const creatPermissionCheck = (permission: string) => {
+  return (spaceData.value.permissionList ?? []).includes(permission);
+}
+// 定义权限检查
+const canManagerSpaceUser = computed(() => creatPermissionCheck(SPACE_PERMISSION_ENUM.SPACE_USER_MANAGE));
+const canUploadPicture =  computed(() => creatPermissionCheck(SPACE_PERMISSION_ENUM.PICTURE_UPLOAD));
+const canEditPicture =  computed(() => creatPermissionCheck(SPACE_PERMISSION_ENUM.PICTURE_EDIT));
+const canDeletePicture =  computed(() => creatPermissionCheck(SPACE_PERMISSION_ENUM.PICTURE_DELETE));
+const isPrivateSpacce = computed(() => spaceData.value.spaceType === SPACE_TYPE_ENUM.PRIVATE  )
 onMounted(() => {
+  // 判断当前登录用户是否为对应的用户
   fetchData()
 })
 </script>

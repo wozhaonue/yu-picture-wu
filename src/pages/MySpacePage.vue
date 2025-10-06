@@ -13,6 +13,7 @@ import { useLoginUserStore} from '../stores/user';
 import { listSpaceVoByPageUsingPost } from '@/api/spaceController';
 import { message } from 'ant-design-vue';
 import { onMounted } from 'vue';
+import { SPACE_TYPE_ENUM } from '@/constants/teamSpace';
 
 const LoginUserStore = useLoginUserStore();
 //重定向函数 -- 判断用户是否存在个人空间等来决定跳转页面
@@ -28,6 +29,7 @@ const checkUserSpace = async() => {
     userId: loginuser.id,
     current: 1,
     pageSize: 1,
+    spaceType: SPACE_TYPE_ENUM.PRIVATE,
   })
   if(res.data.code === 0){
     console.log(res.data);

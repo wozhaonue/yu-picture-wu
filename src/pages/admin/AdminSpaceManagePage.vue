@@ -27,6 +27,14 @@
           :options="SPACE_LEVEL_OPTIONS"
         />
       </a-form-item>
+      <a-form-item class="form-item-tags" label="空间类型 " name="spaceType">
+        <a-select
+          v-model:value="searchParams.spaceType"
+          placeholder="请选择空间级别"
+          allowClear
+          :options="SPACE_TYPE_OPTIONS"
+        />
+      </a-form-item>
       <a-form-item>
         <a-button type="primary" html-type="submit">搜索</a-button>
       </a-form-item>
@@ -45,7 +53,10 @@
       <template #bodyCell="{ column, record }">
   <!-- 空间级别 -->
   <template v-if="column.dataIndex === 'spaceLevel'">
-    <a-tag>{{ SPACE_LEVEL_MAP[record.spaceLevel] }}</a-tag>
+    <a-tag color="blue">{{ SPACE_LEVEL_MAP[record.spaceLevel] }}</a-tag>
+  </template>
+   <template v-if="column.dataIndex === 'spaceType'">
+    <a-tag color="green">{{ SPACE_TYPE_MAP[record.spaceType] }}</a-tag>
   </template>
   <!-- 使用情况 -->
   <template v-if="column.dataIndex === 'spaceUseInfo'">
@@ -82,6 +93,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { formatSize } from '@/utils'
 import { SPACE_LEVEL_MAP,SPACE_LEVEL_OPTIONS } from '@/constants/space'
 import { deleteSpaceUsingPost, listSpaceByPageUsingPost } from '@/api/spaceController'
+import { SPACE_TYPE_MAP, SPACE_TYPE_OPTIONS } from '@/constants/teamSpace'
 const columns = [
   {
     title: 'id',
@@ -95,6 +107,10 @@ const columns = [
   {
     title: '空间级别',
     dataIndex: 'spaceLevel',
+  },
+  {
+    title: '空间类型',
+    dataIndex: 'spaceType',
   },
   {
     title: '使用情况',

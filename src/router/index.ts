@@ -16,6 +16,8 @@ import MySpacePage from '@/pages/MySpacePage.vue'
 import SpaceDetail from '@/pages/SpaceDetail.vue'
 import SearchPicturePage from '@/pages/SearchPicturePage.vue'
 import SpaceAnalysis from '@/pages/user/SpaceAnalysis.vue'
+import NoResourcePage from '@/pages/NoResourcePage.vue'
+import SpaceUserManagePage from '@/pages/SpaceUserManagePage.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -57,6 +59,13 @@ const router = createRouter({
     {
       path: '/noAuth',
       component: NoAuthPage,
+      meta:{
+        hideInMenu: true,
+      }
+    },
+    {
+      path: '/noResource',
+      component: NoResourcePage,
       meta:{
         hideInMenu: true,
       }
@@ -117,6 +126,12 @@ const router = createRouter({
       props: true
     },
     {
+      path: '/spaceUserManage/:id',
+      name: '空间成员管理',
+      component: SpaceUserManagePage,
+      props: true
+    },
+    {
       path: '/search_picture',
       name: '图片找相似',
       component: SearchPicturePage,
@@ -125,6 +140,15 @@ const router = createRouter({
       path: '/user/spaceAnalysis',
       name: '图片分析',
       component: SpaceAnalysis,
+    },
+    // 404 通配符路由 - 必须放在所有路由的最后
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      redirect: '/noResource',
+      meta: {
+        hideInMenu: true,
+      }
     },
   ],
 })

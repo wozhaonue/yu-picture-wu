@@ -18,11 +18,14 @@
 </template>
 
 <script setup lang="ts">
-import { h, ref, watch } from 'vue'
-import { PictureOutlined, UserOutlined } from '@ant-design/icons-vue'
+import { computed, h, ref, watch, watchEffect } from 'vue'
+import { PictureOutlined, UserOutlined, TeamOutlined } from '@ant-design/icons-vue'
 import { useRouter } from 'vue-router'
 import router from '@/router'
 import { useLoginUserStore } from '../stores/user'
+import { SPACE_TYPE_ENUM } from '@/constants/teamSpace'
+import { listMyTeamSpaceUsingPost } from '@/api/spaceUserController'
+import { message } from 'ant-design-vue'
 
 // 定义props和emit
 const props = defineProps<{
@@ -37,18 +40,21 @@ const emit = defineEmits<{
 const collapsed = ref(props.collapsed ?? true)
 
 // 监听props变化
-watch(() => props.collapsed, (newVal) => {
-  if (newVal !== undefined) {
-    collapsed.value = newVal
-  }
-})
+watch(
+  () => props.collapsed,
+  (newVal) => {
+    if (newVal !== undefined) {
+      collapsed.value = newVal
+    }
+  },
+)
 
 // 监听本地状态变化，通知父组件
 watch(collapsed, (newVal) => {
   emit('update:collapsed', newVal)
 })
 // 菜单列表
-const menuItems = [
+const originalMenuItems = [
   {
     key: '/',
     label: '公共图库',
@@ -59,7 +65,40 @@ const menuItems = [
     label: '我的空间',
     icon: () => h(UserOutlined),
   },
+  {
+    key: '/add_space?spaceType=' + SPACE_TYPE_ENUM.TEAM,
+    label: '创建团队',
+    icon: () => h(TeamOutlined),
+  },
 ]
+const teamSpaceList = ref<API.SpaceUserVO[]>([])
+const menuItems = computed(() => {
+  if (teamSpaceList.value.length < 1) {
+    return originalMenuItems
+  }
+  const childrenItem = teamSpaceList.value
+    .map((spaceUser) => {
+      if (spaceUser?.space) {
+        return {
+          key: '/space/' + spaceUser.spaceId,
+          label: spaceUser.space?.spaceName,
+        }
+      }
+    })
+    .filter((item) => {
+      if (item) {
+        return true
+      }
+      return false
+    })
+  const teamSpaceItem = {
+    type: 'group',
+    key: 'teamSpace',
+    label: '我的团队',
+    children: childrenItem,
+  }
+  return [...originalMenuItems, teamSpaceItem]
+})
 const selectedKeys = ref<string[]>([''])
 const route = useRouter()
 // 监听路由变化，更新当前选中菜单
@@ -69,14 +108,25 @@ route.afterEach((to) => {
 
 //点击菜单进行跳转
 const doMenuClick = ({ key }: { key: string }) => {
-  router.push({
-    path: key,
-  })
+  router.push(key)
 }
 
-
-
+// 获取团队详情
+const fetchTeamDetail = async () => {
+  const res = await listMyTeamSpaceUsingPost()
+  if (res.data.code === 0 && res.data.data) {
+    teamSpaceList.value = res.data.data
+  } else {
+    message.error('未获得足够权限')
+    console.error('无法获得我的团队详情', res.data.message)
+  }
+}
 const useLoginStore = useLoginUserStore()
+watchEffect(() => {
+  if (useLoginStore.loginUser.id) {
+    fetchTeamDetail()
+  }
+})
 </script>
 
 <style scoped>

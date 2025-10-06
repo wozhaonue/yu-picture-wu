@@ -68,6 +68,8 @@ interface Props {
   loading?: boolean
   showop?: boolean
   onReload?: () => void
+  canDelete?: boolean
+  canEdit?: boolean
 }
 const shareModalRef = ref()
 const shareLink = ref<string>('')
@@ -76,6 +78,8 @@ const props = withDefaults(defineProps<Props>(), {
   dataList: () => [],
   loading: false,
   showop: false,
+  canDelete: false,
+  canEdit: false,
 })
 console.log(props.showop)
 

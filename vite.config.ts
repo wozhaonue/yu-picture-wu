@@ -7,7 +7,8 @@ import path from 'path'
 export default defineConfig({
   plugins: [
     vue(),
-    vueDevTools(),
+    // 条件性启用 Vue DevTools，只在明确需要时启用
+    // vueDevTools(),
   ],
   css: {
     // 预处理器选项

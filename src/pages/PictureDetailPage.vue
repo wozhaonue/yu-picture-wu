@@ -77,9 +77,9 @@
             </a-descriptions-item>
           </a-descriptions>
           <a-space size="middle">
-            <a-button v-if="isShowEditDelete()" type="primary" ghost @click="doEdit">编辑</a-button>
+            <a-button v-if="canEditPicture" type="primary" ghost @click="doEdit">编辑</a-button>
             <a-popconfirm
-              v-if="isShowEditDelete()"
+              v-if="canDeletePicture"
               title="你是否要删除"
               ok-text="是"
               cancel-text="否"
@@ -108,10 +108,10 @@ import { DownloadOutlined, ShareAltOutlined } from '@ant-design/icons-vue'
 import { downloadFile, formatSize, toTextColor } from '@/utils'
 import { deletePictureUsingPost, getPictureVoByIdUsingGet } from '@/api/pictureController'
 import { message } from 'ant-design-vue'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useLoginUserStore } from '@/stores/user'
 import ShareModal from '@/components/ShareModal/ShareModal.vue'
+import { SPACE_PERMISSION_ENUM } from '@/constants/teamSpace'
 
 const shareModalRef = ref()
 const shareLink = ref<string>('')
@@ -151,20 +151,6 @@ const getPictureDetail = async () => {
     // message.error('获取失败')
     console.error(res.data.message)
   }
-}
-const userLogin = useLoginUserStore()
-/**
- * 展示编辑和删除按钮的权限校验函数
- */
-const isShowEditDelete = () => {
-  // 如果用户未登录
-  if (!userLogin.loginUser?.id) {
-    return false
-  }
-  return (
-    userLogin.loginUser?.id === pictureData.value.user?.id ||
-    userLogin.loginUser?.userRole === 'admin'
-  )
 }
 /**
  * 编辑图片
@@ -213,6 +199,22 @@ const doDownLoad = async () => {
 const cancel = () => {
   console.log('取消删除图片数据操作')
 }
+
+// 监听路由参数变化，当从一个图片详情页跳转到另一个图片详情页时重新加载数据
+watch(() => props.id, (newPictureId) => {
+  if (newPictureId) {
+    getPictureDetail();
+  }
+}, { immediate: false })
+// 通用权限检查函数
+const creatPermissionCheck = (permission: string) => {
+  return (pictureData.value.permissionList ?? []).includes(permission);
+}
+// 定义权限检查
+const canManagerSpaceUser = computed(() => creatPermissionCheck(SPACE_PERMISSION_ENUM.SPACE_USER_MANAGE));
+const canUploadPicture =  computed(() => creatPermissionCheck(SPACE_PERMISSION_ENUM.PICTURE_UPLOAD));
+const canEditPicture =  computed(() => creatPermissionCheck(SPACE_PERMISSION_ENUM.PICTURE_EDIT));
+const canDeletePicture =  computed(() => creatPermissionCheck(SPACE_PERMISSION_ENUM.PICTURE_DELETE));
 onMounted(() => {
   getPictureDetail()
 })

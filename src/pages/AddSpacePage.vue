@@ -1,6 +1,6 @@
 <template>
   <div id="add-space-page">
-    <h2 style="margin-bottom: 32px; text-align: left">{{route.query.id ? '空间编辑':'空间创建'}}</h2>
+    <h2 style="margin-bottom: 32px; text-align: left">{{SPACE_TYPE_MAP[spaceType]}}{{route.query.id ? '编辑':'创建'}}</h2>
     <!-- 提示用户空间的选择 -->
     <a-alert
       style="margin-bottom: 8px"
@@ -55,10 +55,11 @@
 <script setup lang="ts">
 import { addSpaceUsingPost, getSpaceVoByIdUsingGet, listSpaceLevelUsingGet, updateSpaceUsingPost } from '@/api/spaceController'
 import { SPACE_LEVEL_ENUM, SPACE_LEVEL_OPTIONS } from '@/constants/space'
+import { SPACE_TYPE_ENUM, SPACE_TYPE_MAP } from '@/constants/teamSpace'
 import router from '@/router'
 import { formatSize } from '@/utils'
 import { message } from 'ant-design-vue'
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 // 提示信息变量
@@ -69,7 +70,12 @@ const formData = reactive<API.SpaceAddRequest>({
 })
 const loading = ref<boolean>(false);
 const spaceLevelList = ref<API.SpaceLevel[]>([]);
-
+const spaceType = computed(() => {
+  if(route.query?.spaceType){
+    return Number(route.query?.spaceType)
+  }
+  return SPACE_TYPE_ENUM.PRIVATE;
+})
 /**
  * 创建或编辑空间
  */
@@ -86,6 +92,7 @@ const handleSubmit = async () => {
   }else{
   res = await addSpaceUsingPost({
     ...formData,
+    spaceType: spaceType.value,
   })
 }
   if (res.data.code === 0 && res.data.data) {

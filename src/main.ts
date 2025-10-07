@@ -7,7 +7,7 @@ import App from './App.vue';
 import router from './router';
 import VueCropper from 'vue-cropper';
 import 'vue-cropper/dist/index.css'
-
+// 之前的npm版本为10.8.2
 const app = createApp(App);
 
 app.use(VueCropper);

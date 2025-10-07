@@ -34,7 +34,7 @@
         >AI扩图</a-button
       >
       </a-flex>
-      <EditPicture ref="editPictureRef" :img-url="picture?.url"  :picture="picture" :space-id="spaceId" :onSuccess="onSuccess"/>
+      <EditPicture ref="editPictureRef" :img-url="picture?.url"  :picture="picture" :space-id="spaceId" :space="space" :onSuccess="onSuccess"/>
       <EnlargeImage ref="enLargeImageRef"  :img-url="picture?.url"  :picture="picture" :space-id="spaceId" :onSuccess="onSuccess"/>
     </div>
     <a-form
@@ -92,14 +92,15 @@ import {
 } from '@/api/pictureController'
 import PictureUpload from '@/components/PictureUplo​ad.vue'
 import { message } from 'ant-design-vue'
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import UrlPictureUpload from '@/components/urlPictureUpload.vue'
+import { getSpaceVoByIdUsingGet } from '@/api/spaceController'
 
 const editPictureRef = ref();
 const enLargeImageRef = ref();
 const spaceId = computed(() => {
-  return route.query?.spaceId
+  return route.query?.spaceId as string
 })
 const activeKey = ref<'picture' | 'url'>('picture')
 const route = useRoute()
@@ -222,7 +223,42 @@ const doEnlargeModal = (e:MouseEvent) => {
     enLargeImageRef.value.openModal();
   }
 }
+/**
+ * 获取空间信息
+ * 通过判断空间类型spaceType判断编辑图片弹窗中是否需要协同编辑
+ */
+const space = ref<API.SpaceVO>({})
+const fetchSpace = async() => {
+  // 检查 spaceId 是否存在
+  if (!spaceId.value) {
+    console.log('没有 spaceId，跳过获取空间信息')
+    return
+  }
+
+  try {
+    const res = await getSpaceVoByIdUsingGet({
+      id: spaceId.value, // 后端实际可以处理 string 类型的 id
+    })
+    
+    if (res.data.code === 0 && res.data.data) {
+      space.value = res.data.data
+      console.log('获取空间信息成功:', space.value)
+    } else {
+      console.error('获取空间信息失败:', res.data.message)
+      // 可以选择显示错误提示
+      // message.error('获取空间信息失败')
+    }
+  } catch (error) {
+    console.error('获取空间信息时发生错误:', error)
+    // 网络错误或其他异常
+    // message.error('网络错误，获取空间信息失败')
+  }
+}
+watchEffect(() => {
+  fetchSpace();
+})
 onMounted(() => {
+  fetchSpace();
   getTagsAndCategoryOptions() // 在组件挂载时获取分类和标签选项数据
   getOldPicture() // 在组件挂载时获取老图片信息
 })

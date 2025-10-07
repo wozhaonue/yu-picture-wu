@@ -146,7 +146,7 @@ const getPictureDetail = async () => {
     // message.success('获取成功')
     const data = res.data.data
     pictureData.value = data
-    // console.log(pictureData.value)
+    console.log(pictureData.value)
   } else {
     // message.error('获取失败')
     console.error(res.data.message)
@@ -161,6 +161,7 @@ const doEdit = () => {
     query: {
       // 设置搜索参数为id
       id: props.id,
+      spaceId: pictureData.value?.spaceId,
     },
   })
 }
@@ -211,8 +212,6 @@ const creatPermissionCheck = (permission: string) => {
   return (pictureData.value.permissionList ?? []).includes(permission);
 }
 // 定义权限检查
-const canManagerSpaceUser = computed(() => creatPermissionCheck(SPACE_PERMISSION_ENUM.SPACE_USER_MANAGE));
-const canUploadPicture =  computed(() => creatPermissionCheck(SPACE_PERMISSION_ENUM.PICTURE_UPLOAD));
 const canEditPicture =  computed(() => creatPermissionCheck(SPACE_PERMISSION_ENUM.PICTURE_EDIT));
 const canDeletePicture =  computed(() => creatPermissionCheck(SPACE_PERMISSION_ENUM.PICTURE_DELETE));
 onMounted(() => {

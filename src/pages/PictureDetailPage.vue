@@ -1,10 +1,20 @@
 <template>
   <div id="picture-detail-page">
     <a-row :gutter="[16, 16]">
-      <a-col :xs="24" :md="16" :lg="16" :xl="16">
-        <a-card title="图片预览" :bordered="false" :bodyStyle="{'height': '550px'}">
+      <a-col :xs="24" :md="24" :lg="16" :xl="16">
+        <div class="show-container" style="height: 700px">
           <!-- 高清图片预览实现渐进加载 -->
-          <a-image style="height: 480px" :src="pictureData.url">
+          <a-image
+            class="show-image"
+            style="
+              height: 600px;
+              border: 2px solid #c0c0c0;
+              padding: 3px;
+              background-color: black;
+              border-radius: 20px;
+            "
+            :src="pictureData.url"
+          >
             <template v-if="pictureData.thumbnailUrl" #placeholder>
               <a-image :src="pictureData.thumbnailUrl" style="height: 480px" :preview="false" />
             </template>
@@ -12,7 +22,7 @@
               <div
                 style="
                   background-color: #f0f0f0;
-                  height: 480px;
+                  height: 600px;
                   display: flex;
                   align-items: center;
                   justify-content: center;
@@ -22,85 +32,98 @@
               </div>
             </template>
           </a-image>
-        </a-card>
+        </div>
       </a-col>
-      <a-col :xs="24" :md="8" :lg="8" :xl="8">
-        <a-card title="详细信息" :bordered="false" :bodyStyle="{'height': '550px'}">
-          <a-descriptions :title="pictureData.name" :column="1">
-            <a-descriptions-item label="作者">
-              <a-space>
-                <a-avatar :size="24" v-if="pictureData.user?.userAvatar" :src="pictureData.user?.userAvatar" />
-             <a-avatar v-else :size="24">
-        <template #icon><UserOutlined /></template>
-      </a-avatar>
-                <div style="color: cadetblue; font-weight: bold;">{{ pictureData.user?.userName }}</div>
-              </a-space>
-            </a-descriptions-item>
-            <a-descriptions-item label="简介">
-              <div style="color: darkgrey">{{ pictureData.introduction ?? '暂无' }}</div>
-            </a-descriptions-item>
-            <a-descriptions-item label="分类">
-              <a-tag color="green">{{ pictureData.category ?? '默认' }}</a-tag>
-            </a-descriptions-item>
-            <a-descriptions-item label="标签">
-              <div v-if="pictureData.tags?.length !== 0">
-                <a-tag v-for="tag in pictureData.tags ?? []" :key="tag">{{ tag }}</a-tag>
-              </div>
-              <div v-else>
-                <a-tag>暂无</a-tag>
-              </div>
-            </a-descriptions-item>
-            <a-descriptions-item label="格式">
-              {{ pictureData.picFormat ?? '-' }}
-            </a-descriptions-item>
-            <a-descriptions-item label="宽度">
-              {{ pictureData.picWidth ?? '-' }}
-            </a-descriptions-item>
-            <a-descriptions-item label="高度">
-              {{ pictureData.picHeight ?? '-' }}
-            </a-descriptions-item>
-            <a-descriptions-item label="宽高比">
-              {{ pictureData.picScale ?? '-' }}
-            </a-descriptions-item>
-            <a-descriptions-item label="大小">
-              {{ formatSize(pictureData.picSize) }}
-            </a-descriptions-item>
-            <a-descriptions-item label="主色调颜色">
-              <a-space>
-                {{ pictureData.picColor }}
-                <div
-                  v-if="pictureData.picColor"
-                  :style="{
-                    width: '26px',
-                    height: '16px',
-                    backgroundColor: toTextColor(pictureData.picColor),
-                  }"
-                ></div>
-              </a-space>
-            </a-descriptions-item>
-          </a-descriptions>
-          <a-space size="middle">
-            <a-button v-if="canEditPicture" type="primary" ghost @click="doEdit">编辑</a-button>
-            <a-popconfirm
-              v-if="canDeletePicture"
-              title="你是否要删除"
-              ok-text="是"
-              cancel-text="否"
-              @confirm="doDelete"
-              @cancel="cancel"
-            >
-              <a-button danger>删除</a-button>
-            </a-popconfirm>
-            <a-button type="primary" @click="(e: MouseEvent) => doShare(pictureData, e)" ghost
-              >分享
-              <template #icon>
-                <share-alt-outlined /> </template
-            ></a-button>
+      <a-col :xs="24" :md="24" :lg="8" :xl="8">
+        <div class="detail-container" style="height: 700px">
 
-            <a-button type="primary" @click="doDownLoad"><DownloadOutlined />免费下载</a-button>
-          </a-space>
-          <ShareModal ref="shareModalRef" :link="shareLink" />
-        </a-card>
+          <div class="detail" style="height: 420px">
+            <span style="font-size: 1.3rem; font-weight: bolder;">{{ pictureData.name }}</span>
+            <br>
+            <br>
+            <a-descriptions title="详细信息" :column="2">
+              <a-descriptions-item label="作者">
+                <a-space>
+                  <a-avatar
+                    :size="24"
+                    v-if="pictureData.user?.userAvatar"
+                    :src="pictureData.user?.userAvatar"
+                  />
+                  <a-avatar v-else :size="24">
+                    <template #icon><UserOutlined /></template>
+                  </a-avatar>
+                  <div style="color: cadetblue; font-weight: bold">
+                    {{ pictureData.user?.userName }}
+                  </div>
+                </a-space>
+              </a-descriptions-item>
+              <a-descriptions-item label="简介">
+                <div style="color: darkgrey">{{ pictureData.introduction ?? '暂无' }}</div>
+              </a-descriptions-item>
+              <a-descriptions-item label="分类">
+                <a-tag color="green">{{ pictureData.category ?? '默认' }}</a-tag>
+              </a-descriptions-item>
+              <a-descriptions-item label="标签">
+                <div v-if="pictureData.tags?.length !== 0">
+                  <a-tag v-for="tag in pictureData.tags ?? []" :key="tag">{{ tag }}</a-tag>
+                </div>
+                <div v-else>
+                  <a-tag>暂无</a-tag>
+                </div>
+              </a-descriptions-item>
+              <a-descriptions-item label="主色调颜色">
+                <a-space>
+                  {{ pictureData.picColor }}
+                  <div
+                    v-if="pictureData.picColor"
+                    :style="{
+                      width: '26px',
+                      height: '16px',
+                      backgroundColor: toTextColor(pictureData.picColor),
+                    }"
+                  ></div>
+                </a-space>
+              </a-descriptions-item>
+            </a-descriptions>
+
+            <a-space size="middle">
+              <a-button shape="round" v-if="canEditPicture" type="primary" ghost @click="doEdit">编辑</a-button>
+              <a-popconfirm
+                v-if="canDeletePicture"
+                title="你是否要删除"
+                ok-text="是"
+                cancel-text="否"
+                @confirm="doDelete"
+                @cancel="cancel"
+              >
+                <a-button shape="round" danger>删除</a-button>
+              </a-popconfirm>
+              <a-popover trigger="click" placement="bottom" title="其他信息">
+              <template #content>
+                <p>格式：{{ pictureData.picFormat ?? '-' }}</p>
+
+                <p>宽度:{{ pictureData.picWidth ?? '-' }}</p>
+
+                <p>高度:{{ pictureData.picHeight ?? '-' }}</p>
+                <p>宽高比:{{ pictureData.picScale ?? '-' }}</p>
+                <p>大小:{{ formatSize(pictureData.picSize) }}</p>
+              </template>
+              <a-button type="link">详细信息</a-button>
+            </a-popover>
+
+            </a-space>
+            <br>
+            <br>
+            <a-space>
+               <a-button size="large" shape="circle" type="primary" @click="(e: MouseEvent) => doShare(pictureData, e)" ghost
+                ><template #icon> <share-alt-outlined /> </template
+              ></a-button>
+
+              <a-button size="large" shape="circle" type="primary" @click="doDownLoad"><DownloadOutlined /></a-button>
+            </a-space>
+            <ShareModal ref="shareModalRef" :link="shareLink" />
+          </div>
+        </div>
       </a-col>
     </a-row>
   </div>
@@ -114,7 +137,7 @@ import { message } from 'ant-design-vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import ShareModal from '@/components/ShareModal/ShareModal.vue'
-import { UserOutlined } from '@ant-design/icons-vue';
+import { UserOutlined } from '@ant-design/icons-vue'
 import { SPACE_PERMISSION_ENUM } from '@/constants/teamSpace'
 
 const shareModalRef = ref()
@@ -206,23 +229,64 @@ const cancel = () => {
 }
 
 // 监听路由参数变化，当从一个图片详情页跳转到另一个图片详情页时重新加载数据
-watch(() => props.id, (newPictureId) => {
-  if (newPictureId) {
-    getPictureDetail();
-  }
-}, { immediate: false })
+watch(
+  () => props.id,
+  (newPictureId) => {
+    if (newPictureId) {
+      getPictureDetail()
+    }
+  },
+  { immediate: false },
+)
 // 通用权限检查函数
 const creatPermissionCheck = (permission: string) => {
-  return (pictureData.value.permissionList ?? []).includes(permission);
+  return (pictureData.value.permissionList ?? []).includes(permission)
 }
 // 定义权限检查
-const canEditPicture =  computed(() => creatPermissionCheck(SPACE_PERMISSION_ENUM.PICTURE_EDIT));
-const canDeletePicture =  computed(() => creatPermissionCheck(SPACE_PERMISSION_ENUM.PICTURE_DELETE));
+const canEditPicture = computed(() => creatPermissionCheck(SPACE_PERMISSION_ENUM.PICTURE_EDIT))
+const canDeletePicture = computed(() => creatPermissionCheck(SPACE_PERMISSION_ENUM.PICTURE_DELETE))
 onMounted(() => {
   getPictureDetail()
 })
 </script>
 
 <style scoped>
-
+#picture-detail-page .show-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/* 通过deep下钻将预览遮罩的圆角也实现 */
+#picture-detail-page .show-container :deep(.ant-image-mask) {
+  border-radius: 20px;
+  transition: all 300ms ease;
+}
+#picture-detail-page .show-container :deep(.show-image) {
+  transition: all 300ms ease;
+}
+#picture-detail-page .show-container:hover :deep(.show-image) {
+  transform: scale(1.02) !important;
+}
+#picture-detail-page .show-container:hover :deep(.ant-image-mask) {
+  transform: scale(1.02) !important;
+}
+#picture-detail-page .detail-container {
+  margin-left: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* border: 1px solid; 用于看相对位置的 */
+}
+#picture-detail-page .detail-container .detail {
+  border: 1px solid #cacaca;
+  box-shadow: 1px 1px 7px -3px;
+  border-radius: 20px;
+  margin: 20px;
+  margin-top: 0;
+  padding: 30px;
+  transition: all 400ms ease;
+}
+#picture-detail-page .detail-container .detail:hover {
+  transform: scale(1.02);
+}
 </style>

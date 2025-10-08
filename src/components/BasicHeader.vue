@@ -26,7 +26,10 @@
             <a-dropdown>
               <a class="ant-dropdown-link" @click.prevent>
                 <a-space>
-                  <a-avatar :size="40" :src="loginUserStore.loginUser.userAvatar" />
+                  <a-avatar v-if="loginUserStore.loginUser.userAvatar" :size="40" :src="loginUserStore.loginUser.userAvatar" />
+                  <a-avatar v-else :size="40">
+        <template #icon><UserOutlined /></template>
+      </a-avatar>
                   {{ loginUserStore.loginUser.userName ?? '无名' }}
                 </a-space>
                 <DownOutlined />
@@ -66,6 +69,7 @@ import router from '@/router'
 import { useLoginUserStore } from '@/stores/user'
 import { userLogoutUsingPost } from '@/api/userController'
 import checkAccess from '@/access/checkAccess'
+import { UserOutlined } from '@ant-design/icons-vue';
 import { useAppStore } from '@/stores/app'
 
 const app = useAppStore();

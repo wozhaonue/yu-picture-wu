@@ -1,8 +1,8 @@
 <template>
   <div id="picture-detail-page">
     <a-row :gutter="[16, 16]">
-      <a-col :xs="24" :md="16" :lg="16" :xl="16">
-        <a-card title="图片预览">
+      <a-col :span="18" :xs="24" :md="16" :lg="16" :xl="16">
+        <a-card title="图片预览" :bordered="false">
           <!-- 高清图片预览实现渐进加载 -->
           <a-image style="height: 480px" :src="pictureData.url">
             <template v-if="pictureData.thumbnailUrl" #placeholder>
@@ -24,12 +24,15 @@
           </a-image>
         </a-card>
       </a-col>
-      <a-col :xs="24" :md="8" :lg="8" :xl="8">
-        <a-card title="详细信息">
+      <a-col :span="6" :xs="24" :md="8" :lg="8" :xl="8">
+        <a-card title="详细信息" :bordered="false">
           <a-descriptions :title="pictureData.name" :column="1">
             <a-descriptions-item label="作者">
               <a-space>
-                <a-avatar :size="24" :src="pictureData.user?.userAvatar" />
+                <a-avatar :size="24" v-if="pictureData.user?.userAvatar" :src="pictureData.user?.userAvatar" />
+             <a-avatar v-else :size="24">
+        <template #icon><UserOutlined /></template>
+      </a-avatar>
                 <div style="color: dodgerblue">{{ pictureData.user?.userName }}</div>
               </a-space>
             </a-descriptions-item>
@@ -111,6 +114,7 @@ import { message } from 'ant-design-vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import ShareModal from '@/components/ShareModal/ShareModal.vue'
+import { UserOutlined } from '@ant-design/icons-vue';
 import { SPACE_PERMISSION_ENUM } from '@/constants/teamSpace'
 
 const shareModalRef = ref()
@@ -220,14 +224,14 @@ onMounted(() => {
 </script>
 
 <style scoped>
-#homePage {
+#picture-detail-page {
   margin-bottom: 16px;
 }
-#homePage .search-input {
+#picture-detail-page .search-input {
   max-width: 480px;
   margin: 0 auto 16px;
 }
-#homePage .tags-show {
+#picture-detail-page .tags-show {
   margin-bottom: 16px;
 }
 </style>

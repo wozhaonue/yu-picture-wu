@@ -93,7 +93,7 @@ export const downloadFile = async (url?: string, name?: string): Promise<boolean
  */
 export const toTextColor = (color: string) => {
   const beforeHexText = color.startsWith('0x') ? color.slice(2) : color
-  const hexText = parseInt(beforeHexText, 16).toString().padStart(6, '0')
+  const hexText = beforeHexText.toString().padStart(6, '0')
   return `#${hexText}`
 }
 

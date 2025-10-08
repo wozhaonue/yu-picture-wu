@@ -1,8 +1,8 @@
 <template>
   <div id="picture-detail-page">
     <a-row :gutter="[16, 16]">
-      <a-col :span="18" :xs="24" :md="16" :lg="16" :xl="16">
-        <a-card title="图片预览" :bordered="false">
+      <a-col :xs="24" :md="16" :lg="16" :xl="16">
+        <a-card title="图片预览" :bordered="false" :bodyStyle="{'height': '550px'}">
           <!-- 高清图片预览实现渐进加载 -->
           <a-image style="height: 480px" :src="pictureData.url">
             <template v-if="pictureData.thumbnailUrl" #placeholder>
@@ -24,8 +24,8 @@
           </a-image>
         </a-card>
       </a-col>
-      <a-col :span="6" :xs="24" :md="8" :lg="8" :xl="8">
-        <a-card title="详细信息" :bordered="false">
+      <a-col :xs="24" :md="8" :lg="8" :xl="8">
+        <a-card title="详细信息" :bordered="false" :bodyStyle="{'height': '550px'}">
           <a-descriptions :title="pictureData.name" :column="1">
             <a-descriptions-item label="作者">
               <a-space>
@@ -33,7 +33,7 @@
              <a-avatar v-else :size="24">
         <template #icon><UserOutlined /></template>
       </a-avatar>
-                <div style="color: dodgerblue">{{ pictureData.user?.userName }}</div>
+                <div style="color: cadetblue; font-weight: bold;">{{ pictureData.user?.userName }}</div>
               </a-space>
             </a-descriptions-item>
             <a-descriptions-item label="简介">
@@ -71,7 +71,7 @@
                 <div
                   v-if="pictureData.picColor"
                   :style="{
-                    width: '16px',
+                    width: '26px',
                     height: '16px',
                     backgroundColor: toTextColor(pictureData.picColor),
                   }"
@@ -224,14 +224,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-#picture-detail-page {
-  margin-bottom: 16px;
-}
-#picture-detail-page .search-input {
-  max-width: 480px;
-  margin: 0 auto 16px;
-}
-#picture-detail-page .tags-show {
-  margin-bottom: 16px;
-}
+
 </style>

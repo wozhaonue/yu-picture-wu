@@ -1,5 +1,6 @@
 <template>
   <div id="user-login-page">
+    <div class="form-container">
     <h2 class="login-title">鱼皮智能协同云图库 - 用户登录</h2>
     <div class="desc">企业级项目</div>
     <a-form
@@ -44,6 +45,7 @@
     </a-form-item>
   </a-form>
   </div>
+  </div>
 </template>
 <script lang="ts" setup>
 import { reactive } from 'vue';
@@ -80,6 +82,7 @@ const dologinRequest = async(values: API.UserLoginRequest) => {
 <style scoped>
 #user-login-page {
   margin: 0 auto;
+  margin-top: 50px;
   padding: 32px;
   max-width: 500px;
 }
@@ -88,6 +91,15 @@ const dologinRequest = async(values: API.UserLoginRequest) => {
   font-size: 22px;
   margin-bottom: 22px;
 }
+#user-login-page .form-container {
+  padding: 24px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  background: #fff;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 #user-login-page .desc {
   text-align: center;
   font-size: 14px;

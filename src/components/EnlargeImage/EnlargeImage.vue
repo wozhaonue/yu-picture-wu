@@ -50,7 +50,6 @@ import {
   createPictureOutPaintingTaskUsingPost,
   getPictureOutPaintingTaskUsingGet,
   uploadPictureByUrlUsingPost,
-  uploadPictureUsingPost,
 } from '@/api/pictureController'
 //编辑器组件的引用
 const loading = ref(false)

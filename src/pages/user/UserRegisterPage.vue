@@ -1,69 +1,71 @@
 <template>
   <div id="user-register-page">
-    <h2 class="register-title">鱼皮智能协同云图库 - 用户注册</h2>
-    <div class="desc">企业级项目</div>
-    <a-form
-    :model="formState"
-    autocomplete="off"
-    @finish="dologinRequest"
-  >
-    <a-form-item
-      name="userAccount"
-      :rules="[{required: true, message: '该项必填', trigger: ['change', 'blur']}]"
-     
+    <div class="form-container">
+      <h2 class="register-title">智能协同云图库 - 用户注册</h2>
+      <div class="desc">企业级项目</div>
+      <a-form
+      :model="formState"
+      autocomplete="off"
+      @finish="dologinRequest"
     >
-      <a-input v-model:value="formState.userAccount"  placeholder="请输入账号" />
-    </a-form-item>
+      <a-form-item
+        name="userAccount"
+        :rules="[{required: true, message: '该项必填', trigger: ['change', 'blur']}]"
 
-    <a-form-item
-      name="userPassword"
-      :rules="[ {
-    required: true,
-    message: '该项必填',
-    trigger: ['change', 'blur']
-  },
-  {
-    min: 9,
-    message: '至少需要 9 个字符',
-    trigger: ['change', 'blur']
-  },
-  {
-    pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).+$/,
-    message: '必须包含大小写字母、数字和其他字符',
-    trigger: ['change', 'blur']
-  }]"
-     
-    >
-      <a-input-password v-model:value="formState.userPassword"  placeholder="请输入密码" />
-    </a-form-item>
-    <a-form-item
-      name="checkPassword"
-      :rules="[ {
-    required: true,
-    message: '该项必填',
-    trigger: ['change', 'blur']
-  },
-  {
-    min: 9,
-    message: '至少需要 9 个字符',
-    trigger: ['change', 'blur']
-  },
-  {
-    pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).+$/,
-    message: '必须包含大小写字母、数字和其他字符',
-    trigger: ['change', 'blur']
-  }]"
-     
-    >
-      <a-input-password v-model:value="formState.checkPassword"  placeholder="请输入确认密码" />
-    </a-form-item>
-    <div class="tip">已有账号？
-      <router-link to="/user/login">立即登录</router-link>
+      >
+        <a-input v-model:value="formState.userAccount"  placeholder="请输入账号" />
+      </a-form-item>
+
+      <a-form-item
+        name="userPassword"
+        :rules="[ {
+      required: true,
+      message: '该项必填',
+      trigger: ['change', 'blur']
+    },
+    {
+      min: 9,
+      message: '至少需要 9 个字符',
+      trigger: ['change', 'blur']
+    },
+    {
+      pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).+$/,
+      message: '必须包含大小写字母、数字和其他字符',
+      trigger: ['change', 'blur']
+    }]"
+
+      >
+        <a-input-password v-model:value="formState.userPassword"  placeholder="请输入密码" />
+      </a-form-item>
+      <a-form-item
+        name="checkPassword"
+        :rules="[ {
+      required: true,
+      message: '该项必填',
+      trigger: ['change', 'blur']
+    },
+    {
+      min: 9,
+      message: '至少需要 9 个字符',
+      trigger: ['change', 'blur']
+    },
+    {
+      pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).+$/,
+      message: '必须包含大小写字母、数字和其他字符',
+      trigger: ['change', 'blur']
+    }]"
+
+      >
+        <a-input-password v-model:value="formState.checkPassword"  placeholder="请输入确认密码" />
+      </a-form-item>
+      <div class="tip">已有账号？
+        <router-link to="/user/login">立即登录</router-link>
+      </div>
+      <a-form-item>
+        <a-button class="register-btn" type="primary" html-type="submit">注册</a-button>
+      </a-form-item>
+    </a-form>
     </div>
-    <a-form-item>
-      <a-button class="register-btn" type="primary" html-type="submit">注册</a-button>
-    </a-form-item>
-  </a-form>
   </div>
 </template>
 <script lang="ts" setup>
@@ -97,6 +99,7 @@ const dologinRequest = async(values: API.UserRegisterRequest) => {
 <style scoped>
 #user-register-page {
   margin: 0 auto;
+  margin-top: 50px;
   padding: 32px;
   max-width: 500px;
 }
@@ -110,6 +113,14 @@ const dologinRequest = async(values: API.UserRegisterRequest) => {
   font-size: 14px;
   color: #999;
   margin-bottom: 22px;
+}
+#user-register-page .form-container {
+  padding: 24px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  background: #fff;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 #user-register-page .register-btn {
   width: 100%;

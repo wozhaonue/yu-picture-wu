@@ -46,6 +46,8 @@
 
 <script setup lang="ts">
 import { editPictureByBatchUsingPost, listPictureTagCategoryUsingGet } from '@/api/pictureController';
+import { ALL_CODE_ENUM } from '@/constants';
+import router from '@/router';
 import { message } from 'ant-design-vue';
 import { onMounted, reactive, ref } from 'vue'
 interface Props {
@@ -112,6 +114,10 @@ const doSubmit = async(value:any) => {
     closeModal();
     message.error('处理异常');
     console.error('批量处理图片异常',res.data.message);
+    if(res.data.code === ALL_CODE_ENUM.FORBIDDEN){
+      message.error('无权限');
+      router.back();
+    }
   }
 }
 /**

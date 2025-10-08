@@ -21,7 +21,7 @@
     <br />
     <div v-if="isTeamSpace" class="image-edit-button">
       <a-space size="large">
-        <a-button v-if="!canEdit" type="primary" disabled>正在编辑</a-button>
+        <a-button v-if="!canEnterEdit" type="primary" disabled>正在编辑</a-button>
         <a-button @click="enterEdit" v-if="canEnterEdit" type="primary">进入编辑</a-button>
         <a-button @click="exitEdit" v-if="canExitEdit" type="primary">退出编辑</a-button>
       </a-space>
@@ -81,6 +81,7 @@ import { useLoginUserStore } from '@/stores/user'
 import PictureEditWebSocket from '@/utils'
 import { PICTURE_EDIT_ACTION_ENUM, PICTURE_EDIT_MESSAGE_TYPE_ENUM } from '@/constants/picture'
 import { SPACE_TYPE_ENUM } from '@/constants/teamSpace'
+import { ALL_CODE_ENUM } from '@/constants'
 //编辑器组件的引用
 const cropper = ref()
 const loading = ref(false)
@@ -158,6 +159,10 @@ const handleUpload = async ({ file }: any) => {
       // 将上传成功的图片信息传递给父组件
       props.onSuccess?.(res.data.data)
     } else {
+      if(res.data.code === ALL_CODE_ENUM.FORBIDDEN){
+        message.error('无权限');
+        router.back();
+      }
       message.error(res.data.message)
     }
   } catch (error) {

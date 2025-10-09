@@ -56,11 +56,17 @@ onMounted(fetchData);
 </script>
 <style scoped>
 #user-profile-page{
-  background: radial-gradient(circle,#e0e0e0 0%,#fff 50%);
   height: 80vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  background: radial-gradient(circle,#e0e0e0 0%,#fff 50%);
+  html[data-dark='light'] & {
+  background: radial-gradient(circle,#e0e0e0 0%,#fff 50%);
+  }
+  html[data-dark='dark'] & {
+  background: radial-gradient(circle,#000000 0%,#181c20 50%);
+  }
 }
 #user-profile-page .container{
   padding: 30px;
@@ -76,11 +82,21 @@ onMounted(fetchData);
 #user-profile-page .container .prompt {
   font-size: 1.2rem;
   font-weight: bold;
+  html[data-dark='light'] & {
   color: #666;
+  }
+  html[data-dark='dark'] & {
+    color: #fff;
+  }
 }
 #user-profile-page .container .person-data{
   font-size: 1.1rem;
+  html[data-dark='light'] & {
   color: #333;
+  }
+  html[data-dark='dark'] & {
+    color: #fff;
+  }
 }
 </style>
 

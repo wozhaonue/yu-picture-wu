@@ -107,6 +107,12 @@ const dologinRequest = async(values: API.UserRegisterRequest) => {
   text-align: center;
   font-size: 22px;
   margin-bottom: 22px;
+  html[data-dark='light'] & {
+    color: #222;
+  }
+  html[data-dark='dark'] & {
+    color: #fff;
+  }
 }
 #user-register-page .desc {
   text-align: center;
@@ -116,11 +122,18 @@ const dologinRequest = async(values: API.UserRegisterRequest) => {
 }
 #user-register-page .form-container {
   padding: 24px;
-  border: 1px solid #e8e8e8;
   border-radius: 8px;
-  background: #fff;
   transition: all 0.3s ease;
+  html[data-dark='light'] & {
+  background: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e8e8e8;
+  }
+  html[data-dark='dark'] & {
+    background: linear-gradient(to right, #181c20, #0c0f12);
+    border: 1px solid #606060;
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+  }
 }
 #user-register-page .register-btn {
   width: 100%;

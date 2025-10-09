@@ -65,7 +65,8 @@ const collapsed = ref(true)
     border-bottom: 1px solid #f0f0f0;
   }
   html[data-dark='dark'] & {
-    background-color: rgb(0, 0, 0);
+    background-color: #141414;
+
     border-bottom: 1px solid #3c3c3c;
   }
 }
@@ -95,11 +96,17 @@ const collapsed = ref(true)
 /* 可滚动的内容区域 */
 #basicLayout .scrollable-content {
   margin-left: 80px; /* 为折叠状态的侧边栏预留空间 */
-  background: linear-gradient(to right, #fefefe, #fff);
   padding: 20px;
   min-height: calc(100vh - 64px);
   overflow-y: auto;
   box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.02);
+  html[data-dark='light'] & {
+    background: linear-gradient(to right, #fefefe, #fff);
+  }
+  html[data-dark='dark'] & {
+    /* 从深蓝色调的黑到更深的黑 */
+    background: linear-gradient(to right, #181c20, #0c0f12);
+  }
 }
 
 /* 页脚样式 */
@@ -111,11 +118,17 @@ const collapsed = ref(true)
   left: 0;
   right: 0;
   text-align: center;
-  background-color: #fff;
   font-size: 14px;
   padding: 16px;
-  border-top: 1px solid #9d9d9d;
   margin-top: auto;
+  html[data-dark='light'] & {
+    background-color: #fff;
+    border-top: 1px solid #9d9d9d;
+  }
+  html[data-dark='dark'] & {
+    background: linear-gradient(to right, #181c20, #0c0f12);
+    border-top: 1px solid #656565;
+  }
 }
 
 #basicLayout .footer a {
@@ -124,7 +137,12 @@ const collapsed = ref(true)
 }
 
 #basicLayout .footer a:hover {
-  color: #222;
+  html[data-dark='light'] & {
+    color: #222;
+  }
+  html[data-dark='dark'] & {
+    color: #fff;
+  }
 }
 
 /* 当侧边栏展开时，调整内容区域的左边距 */

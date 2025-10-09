@@ -153,6 +153,11 @@ watchEffect(() => {
   background: #000;
   }
 }
+#basic-sider .sider :deep(.ant-menu){
+  html[data-dark='dark'] & {
+  background: #000;
+  }
+}
 #basic-sider :deep(.ant-layout-sider-trigger) {
   html[data-dark='light'] & {
   background: #fff;

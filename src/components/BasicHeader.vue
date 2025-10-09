@@ -197,7 +197,13 @@ const goToMySpace = () => {
 #basicHeader .title {
   margin-left: 10px;
   font-size: 16px;
-  color: #111111;
+  font-weight: bold;
+  html[data-dark='light'] & {
+  color: #333;
+  }
+  html[data-dark='dark'] & {
+    color: #dcdcdc;
+  }
 }
 #basicHeader .header-menu {
   padding-inline: 20px;

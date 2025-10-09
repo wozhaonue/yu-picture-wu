@@ -4,19 +4,19 @@ import { computed, ref, watchEffect } from "vue";
 import { theme } from "ant-design-vue";
 
 export const useAppStore = defineStore('app',()=>{
-  const themeName = ref('purple');
+  const themeName = ref('blue');
   const darkMode = ref('light');
-  
+
   // 使用 watchEffect 处理 DOM 副作用
   watchEffect(() => {
     // console.log('watchEffect triggered, setting data-dark to:', darkMode.value)
     document.documentElement.setAttribute('data-dark', darkMode.value);
   });
-  
+
   watchEffect(() => {
     document.documentElement.setAttribute('data-theme', themeName.value);
   });
-  
+
   const themeConfig = computed(() => {
     return {
       token: {

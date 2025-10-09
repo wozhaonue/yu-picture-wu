@@ -36,7 +36,13 @@ const appStore = useAppStore()
 const isDayMode = computed({
   get: () => appStore.darkMode === 'light',
   set: (value: boolean) => {
-    appStore.darkMode = value ? 'light' : 'dark'
+    console.log('isDayMode setter called with:', value, 'current darkMode:', appStore.darkMode)
+    // 直接根据开关状态设置对应的模式
+    const targetMode = value ? 'light' : 'dark'
+    if (appStore.darkMode !== targetMode) {
+      console.log('Calling toggleDarkMode')
+      appStore.toggleDarkMode()
+    }
   }
 })
 </script>

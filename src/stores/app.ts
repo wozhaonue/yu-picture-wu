@@ -1,17 +1,23 @@
 import { defineStore } from "pinia";
 import variable from '../styles/variable.module.scss'
-import { computed, ref } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { theme } from "ant-design-vue";
 
 export const useAppStore = defineStore('app',()=>{
-  const themeName = ref('cyan');
+  const themeName = ref('purple');
   const darkMode = ref('light');
-  const darkModeComp = computed(() => {
-    document.documentElement.setAttribute('data-dark',darkMode.value);
-    return darkMode.value;
-  })
+  
+  // 使用 watchEffect 处理 DOM 副作用
+  watchEffect(() => {
+    // console.log('watchEffect triggered, setting data-dark to:', darkMode.value)
+    document.documentElement.setAttribute('data-dark', darkMode.value);
+  });
+  
+  watchEffect(() => {
+    document.documentElement.setAttribute('data-theme', themeName.value);
+  });
+  
   const themeConfig = computed(() => {
-    document.documentElement.setAttribute('data-theme',themeName.value);
     return {
       token: {
         colorPrimary: variable[themeName.value] || '#2f54eb',
@@ -28,8 +34,10 @@ export const useAppStore = defineStore('app',()=>{
       themeName.value = value;
     }
     const toggleDarkMode = () => {
+      console.log('toggleDarkMode called, current value:', darkMode.value)
       darkMode.value = darkMode.value === 'light' ? 'dark' : 'light';
+      console.log('toggleDarkMode finished, new value:', darkMode.value)
     }
-    return {themeName,darkMode,toggleDarkMode,setThemeName,themeConfig,darkModeComp}
-  },{persist: true},
+    return {themeName,darkMode,toggleDarkMode,setThemeName,themeConfig}
+  },
 )

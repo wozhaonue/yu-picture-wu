@@ -11,11 +11,14 @@
         </div>
 
         <!-- 主内容区域 -->
-        <a-layout-content class="content scrollable-content" :class="{ 'sider-expanded': !collapsed }">
+        <a-layout-content
+          class="content scrollable-content"
+          :class="{ 'sider-expanded': !collapsed }"
+        >
           <a-config-provider :locale="zhCN">
             <router-view></router-view>
           </a-config-provider>
-          <br>
+          <br />
           <!-- 页脚移到内容区域内 -->
           <a-layout-footer class="footer">
             <a
@@ -52,12 +55,19 @@ const collapsed = ref(true)
   left: 0;
   right: 0;
   width: 100%;
-  background-color: white;
   box-shadow: 0 2px 8px rgba(177, 177, 177, 0.1);
   padding-left: 0;
   z-index: 1000;
-  border-bottom: 1px solid #f0f0f0;
   height: 64px; /* Ant Design 默认 header 高度 */
+
+  html[data-dark='light'] & {
+    background-color: white;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  html[data-dark='dark'] & {
+    background-color: rgb(0, 0, 0);
+    border-bottom: 1px solid #3c3c3c;
+  }
 }
 
 /* 主布局区域 */
@@ -73,8 +83,13 @@ const collapsed = ref(true)
   top: 64px; /* 位于固定头部下方 */
   bottom: 0;
   z-index: 999;
-  background-color: #fff;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  html[data-dark='light'] & {
+    background-color: #fff;
+  }
+  html[data-dark='dark'] & {
+    background-color: rgb(0, 0, 0);
+  }
 }
 
 /* 可滚动的内容区域 */
@@ -89,7 +104,7 @@ const collapsed = ref(true)
 
 /* 页脚样式 */
 #basicLayout .footer {
-   /* 为了使页脚始终固定在页面底部 */
+  /* 为了使页脚始终固定在页面底部 */
   position: sticky;
   top: 100vh;
   bottom: auto;

@@ -146,15 +146,28 @@ watchEffect(() => {
   font-size: 18px;
 }
 #basic-sider .sider {
-  background-color: #fff;
-}
-#basic-sider {
+  html[data-dark='light'] & {
   background: #fff;
+  }
+  html[data-dark='dark'] & {
+  background: #000;
+  }
 }
 #basic-sider :deep(.ant-layout-sider-trigger) {
+  html[data-dark='light'] & {
   background: #fff;
+  }
+  html[data-dark='dark'] & {
+  background: #000;
+  }
 }
 #basic-sider :deep(.anticon) {
+  html[data-dark='light'] & {
   color: black !important;
+
+  }
+  html[data-dark='dark'] & {
+  color: white !important;
+  }
 }
 </style>

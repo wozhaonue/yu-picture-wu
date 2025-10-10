@@ -77,27 +77,33 @@ const beforeUpload = (file: UploadProps['fileList'][number]) => {
 
 
 </script>
-<style scoped>
-/* 通过:deep进行下转来真正改变组件库中的样式 */
+<style lang="scss" scoped>
+@import '../styles/variable.module.scss';
+@import '../styles/mixins.scss';
+#picture-upload {
+  :deep(.ant-upload) {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 152px;
+    min-width: 152px;
+  }
 
-#picture-upload :deep(.ant-upload){
-  width: 100% !important;
-  height: 100%!important;
-  min-height: 152px;
-  min-width: 152px;
-}
-#picture-upload img {
-  max-width: 100%;
-  max-height: 360px;
-}
-.ant-upload-select-picture-card i {
-  font-size: 32px;
-  color: #999;
+  img {
+    max-width: 100%;
+    max-height: 360px;
+  }
 }
 
-.ant-upload-select-picture-card .ant-upload-text {
-  margin-top: 8px;
-  color: #666;
+.ant-upload-select-picture-card {
+  i {
+    font-size: $font-size-xl;
+    color: $text-color-secondary;
+  }
+
+  .ant-upload-text {
+    margin-top: $spacing-xs;
+    color: $text-color-secondary;
+  }
 }
 </style>
 

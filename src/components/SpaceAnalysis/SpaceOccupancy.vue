@@ -84,8 +84,10 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.space-occupancy .container {
-  height: 320px;
+<style lang="scss" scoped>
+.space-occupancy {
+  .container {
+    height: 320px;
+  }
 }
 </style>

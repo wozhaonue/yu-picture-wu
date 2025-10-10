@@ -173,8 +173,10 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.space-occupancy-admin .chart {
-  height: 320px;
+<style lang="scss" scoped>
+.space-occupancy-admin {
+  .chart {
+    height: 320px;
+  }
 }
 </style>

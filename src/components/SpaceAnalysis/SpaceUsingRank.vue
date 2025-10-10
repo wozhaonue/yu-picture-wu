@@ -165,9 +165,11 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.space-using-rank .chart {
-  height: 320px;
-  max-width: 100%;
+<style lang="scss" scoped>
+.space-using-rank {
+  .chart {
+    height: 320px;
+    max-width: 100%;
+  }
 }
 </style>

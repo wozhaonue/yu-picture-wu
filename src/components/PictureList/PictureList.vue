@@ -28,16 +28,16 @@
               </div>
               <div v-if="showop" class="showop-button">
                 <a-space>
-                  <a-button size="small" shape="round" @click="(e:MouseEvent) => doEdit(picture, e)" ghost
+                  <a-button size="small" shape="round" @click="(e:MouseEvent) => doEdit(picture, e)"
                     >编辑</a-button
                   >
-                  <a-button size="small" shape="round" @click="(e:MouseEvent) => doDelete( e)" ghost
+                  <a-button size="small" shape="round" @click="(e:MouseEvent) => doDelete( e)"
                     >删除</a-button
                   >
-                  <a-button size="small" shape="round" @click="(e:MouseEvent) => doSearchSimilar(picture, e)" ghost
+                  <a-button size="small" shape="round" @click="(e:MouseEvent) => doSearchSimilar(picture, e)"
                     >找相似</a-button
                   >
-                  <a-button size="small" shape="round" @click="(e:MouseEvent) => doShare(picture, e)" ghost
+                  <a-button size="small" shape="round" @click="(e:MouseEvent) => doShare(picture, e)"
                     >分享</a-button
                   >
                 </a-space>

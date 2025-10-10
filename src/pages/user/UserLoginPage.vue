@@ -79,52 +79,34 @@ const dologinRequest = async(values: API.UserLoginRequest) => {
   }
 };
 </script>
-<style scoped>
+<style lang="scss" scoped>
+@import '../../styles/variable.module.scss';
+@import '../../styles/mixins.scss';
 #user-login-page {
-  margin: 0 auto;
-  margin-top: 50px;
-  padding: 32px;
-  max-width: 500px;
-}
-#user-login-page .login-title {
-  text-align: center;
-  font-size: 22px;
-  margin-bottom: 22px;
-  html[data-dark='light'] & {
-    color: #222;
-  }
-  html[data-dark='dark'] & {
-    color: #fff;
-  }
-}
-#user-login-page .form-container {
-  padding: 24px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  html[data-dark='light'] & {
-  background: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e8e8e8;
-  }
-  html[data-dark='dark'] & {
-    background: linear-gradient(to right, #181c20, #0c0f12);
-    border: 1px solid #606060;
-    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
-  }
-}
+  @include page-container(500px, $spacing-lg, 50px);
 
-#user-login-page .desc {
-  text-align: center;
-  font-size: 14px;
-  color: #999;
-  margin-bottom: 22px;
-}
-#user-login-page .login-btn {
-  width: 100%;
-}
-#user-login-page .tip {
-  text-align: right;
-  margin-bottom: 16px;
+  .login-title {
+    @include center-text($font-size-title, $spacing-sm);
+    @include theme-text($text-color-light, $text-color-dark);
+  }
+
+  .desc {
+    @include center-text($font-size-sm, $spacing-sm);
+    color: $text-color-secondary;
+  }
+
+  .form-container {
+    @include form-container($spacing-md, $border-radius-base);
+  }
+
+  .login-btn {
+    @include full-width-button();
+  }
+
+  .tip {
+    text-align: right;
+    margin-bottom: $spacing-sm;
+  }
 }
 </style>
 

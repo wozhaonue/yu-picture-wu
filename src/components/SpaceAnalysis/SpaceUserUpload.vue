@@ -172,9 +172,11 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.space-user-upload .chart {
-  height: 320px;
-  max-width: 100%;
+<style lang="scss" scoped>
+.space-user-upload {
+  .chart {
+    height: 320px;
+    max-width: 100%;
+  }
 }
 </style>

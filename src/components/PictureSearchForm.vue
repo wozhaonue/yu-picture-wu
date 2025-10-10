@@ -137,9 +137,14 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.picture-search-form .search-form .ant-form-item {
-  margin-bottom: 16px !important;
+<style lang="scss" scoped>
+@import '../styles/variable.module.scss';
+@import '../styles/mixins.scss';
+.picture-search-form {
+  .search-form {
+    .ant-form-item {
+      margin-bottom: $spacing-lg !important;
+    }
+  }
 }
-
 </style>

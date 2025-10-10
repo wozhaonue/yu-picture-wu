@@ -1,3 +1,4 @@
+// 品牌色彩
 $red: #f5222d;
 $orange: #fa541c;
 $yellow: #faad14;
@@ -5,6 +6,77 @@ $cyan: #13c2c2;
 $green: #52c41a;
 $blue: #719ad4;
 $purple: #722ed1;
+
+// 基础色彩系统
+$primary-color: $blue;
+$success-color: $green;
+$warning-color: $yellow;
+$error-color: $red;
+$info-color: $cyan;
+
+// 文本颜色
+$text-color-light: #333;
+$text-color-dark: #fff;
+$text-color-secondary: #999;
+$text-color-disabled: #ccc;
+
+// 背景色
+$bg-color-light: #fff;
+$bg-color-dark: #141414;
+$bg-color-card-light: #fff;
+$bg-color-card-dark: linear-gradient(to right, #181c20, #0c0f12);
+
+// 边框色
+$border-color-light: #e8e8e8;
+$border-color-dark: #3c3c3c;
+$border-color-hover: #d9d9d9;
+
+// 间距系统
+$spacing-xs: 8px;
+$spacing-sm: 16px;
+$spacing-md: 24px;
+$spacing-lg: 32px;
+$spacing-xl: 48px;
+$spacing-xxl: 64px;
+
+// 字体大小
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-base: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 20px;
+$font-size-xxl: 24px;
+$font-size-title: 22px;
+
+// 圆角
+$border-radius-sm: 4px;
+$border-radius-base: 8px;
+$border-radius-lg: 12px;
+
+// 阴影
+$box-shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+$box-shadow-dark: 0 2px 4px rgba(255, 255, 255, 0.1);
+$box-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.15);
+
+// 层级
+$z-index-dropdown: 1000;
+$z-index-sticky: 1020;
+$z-index-fixed: 1030;
+$z-index-modal-backdrop: 1040;
+$z-index-modal: 1050;
+$z-index-popover: 1060;
+$z-index-tooltip: 1070;
+
+// 布局尺寸
+$header-height: 64px;
+$sider-width: 200px;
+$sider-collapsed-width: 80px;
+
+// 容器最大宽度
+$container-sm: 576px;
+$container-md: 768px;
+$container-lg: 992px;
+$container-xl: 1200px;
 
 :export {
   red: $red;
@@ -14,4 +86,9 @@ $purple: #722ed1;
   green: $green;
   blue: $blue;
   purple: $purple;
+  primaryColor: $primary-color;
+  successColor: $success-color;
+  warningColor: $warning-color;
+  errorColor: $error-color;
+  infoColor: $info-color;
 }

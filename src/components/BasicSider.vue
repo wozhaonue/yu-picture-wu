@@ -129,50 +129,40 @@ watchEffect(() => {
 })
 </script>
 
-<style scoped>
-#basic-sider .title-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin: 16px;
-}
-#basic-sider .title-bar img {
-  height: 32px;
-  width: auto;
-}
-#basic-sider .title-bar .title {
-  color: #000;
-  font-size: 18px;
-}
-#basic-sider .sider {
-  html[data-dark='light'] & {
-  background: #fff;
-  }
-  html[data-dark='dark'] & {
-  background: #000;
-  }
-}
-#basic-sider .sider :deep(.ant-menu){
-  html[data-dark='dark'] & {
-  background: #000;
-  }
-}
-#basic-sider :deep(.ant-layout-sider-trigger) {
-  html[data-dark='light'] & {
-  background: #fff;
-  }
-  html[data-dark='dark'] & {
-  background: #000;
-  }
-}
-#basic-sider :deep(.anticon) {
-  html[data-dark='light'] & {
-  color: black !important;
+<style lang="scss" scoped>
+@import '../styles/variable.module.scss';
+@import '../styles/mixins.scss';
+#basic-sider {
+  .title-bar {
+    @include flex-center;
+    gap: $spacing-xs;
+    margin: $spacing-lg;
 
+    img {
+      height: 32px;
+      width: auto;
+    }
+
+    .title {
+      @include theme-text;
+      font-size: $font-size-lg;
+    }
   }
-  html[data-dark='dark'] & {
-  color: white !important;
+
+  .sider {
+    @include theme-background;
+
+    :deep(.ant-menu) {
+      @include theme-background;
+    }
+  }
+
+  :deep(.ant-layout-sider-trigger) {
+    @include theme-background;
+  }
+
+  :deep(.anticon) {
+    @include theme-text;
   }
 }
 </style>

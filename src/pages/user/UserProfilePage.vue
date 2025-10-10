@@ -54,48 +54,41 @@ const doEdit = () => {
 onMounted(fetchData);
 
 </script>
-<style scoped>
-#user-profile-page{
+<style lang="scss" scoped>
+@import '../../styles/variable.module.scss';
+@import '../../styles/mixins.scss';
+#user-profile-page {
   height: 80vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: radial-gradient(circle,#e0e0e0 0%,#fff 50%);
+  @include flex-center();
+  
   html[data-dark='light'] & {
-  background: radial-gradient(circle,#e0e0e0 0%,#fff 50%);
+    background: radial-gradient(circle, #e0e0e0 0%, $bg-color-light 50%);
   }
   html[data-dark='dark'] & {
-  background: radial-gradient(circle,#000000 0%,#181c20 50%);
+    background: radial-gradient(circle, #000000 0%, #181c20 50%);
   }
-}
-#user-profile-page .container{
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  width: 100%;
-  max-width: 650px;
-  text-align: center;
-  z-index: 10;
-}
-#user-profile-page .container .prompt {
-  font-size: 1.2rem;
-  font-weight: bold;
-  html[data-dark='light'] & {
-  color: #666;
-  }
-  html[data-dark='dark'] & {
-    color: #fff;
-  }
-}
-#user-profile-page .container .person-data{
-  font-size: 1.1rem;
-  html[data-dark='light'] & {
-  color: #333;
-  }
-  html[data-dark='dark'] & {
-    color: #fff;
+
+  .container {
+    padding: $spacing-xl;
+    border-radius: $spacing-md;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    width: 100%;
+    max-width: 650px;
+    text-align: center;
+    z-index: 10;
+
+    .prompt {
+      font-size: $font-size-lg;
+      font-weight: bold;
+      @include theme-text(#666, $text-color-dark);
+    }
+
+    .person-data {
+      font-size: $font-size-base;
+      @include theme-text($text-color-light, $text-color-dark);
+    }
   }
 }
 </style>

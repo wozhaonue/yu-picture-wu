@@ -50,11 +50,13 @@ const handleUpload = async() => {
 }
 </script>
 
-<style scoped>
-#url-picture-upload img {
-  width: 100%;
-  max-height: 360px;
-  margin: 0 auto;
-  object-fit: contain;
+<style lang="scss" scoped>
+#url-picture-upload {
+  img {
+    width: 100%;
+    max-height: 360px;
+    margin: 0 auto;
+    object-fit: contain;
+  }
 }
 </style>

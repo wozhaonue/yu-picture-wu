@@ -301,8 +301,10 @@ const closeModal = () => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import '../../styles/variable.module.scss';
+@import '../../styles/mixins.scss';
 .edit-space {
-  text-align: center;
+  @include center-text;
 }
 </style>

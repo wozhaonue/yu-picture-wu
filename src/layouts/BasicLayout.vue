@@ -47,107 +47,77 @@ import zhCN from 'ant-design-vue/es/locale/zh_CN'
 const collapsed = ref(true)
 </script>
 
-<style scoped>
-/* 固定头部样式 */
-#basicLayout .fixed-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  box-shadow: 0 2px 8px rgba(177, 177, 177, 0.1);
-  padding-left: 0;
-  z-index: 1000;
-  height: 64px; /* Ant Design 默认 header 高度 */
+<style lang="scss" scoped>
+@import '../styles/variable.module.scss';
+@import '../styles/mixins.scss';
+#basicLayout {
+  .fixed-header {
+    @include fixed-header($header-height, $z-index-fixed);
+    padding-left: 0;
+    @include theme-background;
+    @include theme-border;
+    border-bottom: 1px solid;
+  }
 
-  html[data-dark='light'] & {
-    background-color: white;
-    border-bottom: 1px solid #f0f0f0;
+  .main-layout {
+    margin-top: $header-height;
+    height: calc(100vh - #{$header-height});
   }
-  html[data-dark='dark'] & {
-    background-color: #141414;
 
-    border-bottom: 1px solid #3c3c3c;
+  .fixed-sider-wrapper {
+    @include fixed-sider($header-height, $z-index-dropdown);
+    @include theme-background;
+    @include box-shadow(2px, 0, 8px);
   }
-}
 
-/* 主布局区域 */
-#basicLayout .main-layout {
-  margin-top: 64px; /* 为固定头部预留空间 */
-  height: calc(100vh - 64px);
-}
+  .scrollable-content {
+    margin-left: $sider-collapsed-width;
+    padding: $spacing-md;
+    min-height: calc(100vh - #{$header-height});
+    overflow-y: auto;
+    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.02);
+    transition: margin-left 0.3s ease;
 
-/* 固定侧边栏包装器 */
-#basicLayout .fixed-sider-wrapper {
-  position: fixed;
-  left: 0;
-  top: 64px; /* 位于固定头部下方 */
-  bottom: 0;
-  z-index: 999;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-  html[data-dark='light'] & {
-    background-color: #fff;
-  }
-  html[data-dark='dark'] & {
-    background-color: rgb(0, 0, 0);
-  }
-}
+    html[data-dark='light'] & {
+      background: linear-gradient(to right, #fefefe, $bg-color-light);
+    }
+    html[data-dark='dark'] & {
+      background: $bg-color-card-dark;
+    }
 
-/* 可滚动的内容区域 */
-#basicLayout .scrollable-content {
-  margin-left: 80px; /* 为折叠状态的侧边栏预留空间 */
-  padding: 20px;
-  min-height: calc(100vh - 64px);
-  overflow-y: auto;
-  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.02);
-  html[data-dark='light'] & {
-    background: linear-gradient(to right, #fefefe, #fff);
+    &.sider-expanded {
+      margin-left: $sider-width;
+    }
   }
-  html[data-dark='dark'] & {
-    /* 从深蓝色调的黑到更深的黑 */
-    background: linear-gradient(to right, #181c20, #0c0f12);
-  }
-}
 
-/* 页脚样式 */
-#basicLayout .footer {
-  /* 为了使页脚始终固定在页面底部 */
-  position: sticky;
-  top: 100vh;
-  bottom: auto;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: 14px;
-  padding: 16px;
-  margin-top: auto;
-  html[data-dark='light'] & {
-    background-color: #fff;
-    border-top: 1px solid #9d9d9d;
-  }
-  html[data-dark='dark'] & {
-    background: linear-gradient(to right, #181c20, #0c0f12);
-    border-top: 1px solid #656565;
-  }
-}
+  .footer {
+    position: sticky;
+    top: 100vh;
+    bottom: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: $font-size-sm;
+    padding: $spacing-sm;
+    margin-top: auto;
 
-#basicLayout .footer a {
-  color: #666;
-  transition: color 0.3s ease;
-}
+    @include theme-background;
+    
+    html[data-dark='light'] & {
+      border-top: 1px solid #9d9d9d;
+    }
+    html[data-dark='dark'] & {
+      border-top: 1px solid #656565;
+    }
 
-#basicLayout .footer a:hover {
-  html[data-dark='light'] & {
-    color: #222;
-  }
-  html[data-dark='dark'] & {
-    color: #fff;
-  }
-}
+    a {
+      color: #666;
+      transition: color 0.3s ease;
 
-/* 当侧边栏展开时，调整内容区域的左边距 */
-#basicLayout .scrollable-content.sider-expanded {
-  margin-left: 200px; /* 展开状态的侧边栏宽度 */
-  transition: margin-left 0.3s ease;
+      &:hover {
+        @include theme-text(#222, $text-color-dark);
+      }
+    }
+  }
 }
 </style>

@@ -1,0 +1,140 @@
+// 主题切换 mixin
+@mixin theme-text($light-color: #333, $dark-color: #fff) {
+  html[data-dark='light'] & {
+    color: $light-color;
+  }
+  html[data-dark='dark'] & {
+    color: $dark-color;
+  }
+}
+
+@mixin theme-background($light-bg: #fff, $dark-bg: #141414) {
+  html[data-dark='light'] & {
+    background-color: $light-bg;
+  }
+  html[data-dark='dark'] & {
+    background-color: $dark-bg;
+  }
+}
+
+@mixin theme-border($light-border: #e8e8e8, $dark-border: #3c3c3c) {
+  html[data-dark='light'] & {
+    border-color: $light-border;
+  }
+  html[data-dark='dark'] & {
+    border-color: $dark-border;
+  }
+}
+
+@mixin theme-card() {
+  html[data-dark='light'] & {
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e8e8e8;
+  }
+  html[data-dark='dark'] & {
+    background: linear-gradient(to right, #181c20, #0c0f12);
+    border: 1px solid #606060;
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+  }
+}
+
+// 布局 mixin
+@mixin center-text($size: 16px, $margin-bottom: 16px) {
+  text-align: center;
+  font-size: $size;
+  margin-bottom: $margin-bottom;
+}
+
+@mixin flex-center($direction: row) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: $direction;
+}
+
+@mixin flex-between() {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin page-container($max-width: 500px, $padding: 32px, $margin-top: 50px) {
+  margin: 0 auto;
+  margin-top: $margin-top;
+  padding: $padding;
+  max-width: $max-width;
+}
+
+@mixin form-container($padding: 24px, $border-radius: 8px) {
+  padding: $padding;
+  border-radius: $border-radius;
+  transition: all 0.3s ease;
+  @include theme-card();
+}
+
+// 按钮 mixin
+@mixin full-width-button() {
+  width: 100%;
+}
+
+@mixin button-hover($scale: 1.02) {
+  transition: transform 0.2s ease;
+  &:hover {
+    transform: scale($scale);
+  }
+}
+
+// 阴影 mixin
+@mixin box-shadow($x: 0, $y: 2px, $blur: 8px, $color: rgba(0, 0, 0, 0.1)) {
+  box-shadow: $x $y $blur $color;
+}
+
+@mixin theme-shadow() {
+  html[data-dark='light'] & {
+    box-shadow: 0 2px 8px rgba(177, 177, 177, 0.1);
+  }
+  html[data-dark='dark'] & {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+// 固定定位 mixin
+@mixin fixed-header($height: 64px, $z-index: 1000) {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: $height;
+  z-index: $z-index;
+  @include theme-shadow();
+}
+
+@mixin fixed-sider($top: 64px, $z-index: 999) {
+  position: fixed;
+  left: 0;
+  top: $top;
+  bottom: 0;
+  z-index: $z-index;
+  @include box-shadow(2px, 0, 8px);
+}
+
+// 响应式 mixin
+@mixin mobile {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: 1025px) {
+    @content;
+  }
+}

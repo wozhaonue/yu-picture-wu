@@ -47,7 +47,7 @@
       :pagination="pagination"
       @change="doTableChange"
       bordered
-      :scroll="{x: 'max-content', y: 600}"
+      :scroll="{x: 'max-content', y: 'max-content'}"
     >
       >
       <template #bodyCell="{ column, record }">

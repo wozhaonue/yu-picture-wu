@@ -40,7 +40,8 @@ const isDayMode = computed({
     // 直接根据开关状态设置对应的模式
     const targetMode = value ? 'light' : 'dark'
     if (appStore.darkMode !== targetMode) {
-      console.log('Calling toggleDarkMode')
+      console.log('Calling toggleDarkMode with animation')
+      // 触发带动画的主题切换
       appStore.toggleDarkMode()
     }
   }

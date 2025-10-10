@@ -6,6 +6,7 @@ import { theme } from "ant-design-vue";
 export const useAppStore = defineStore('app',()=>{
   const themeName = ref('blue');
   const darkMode = ref('light');
+  const isThemeTransitioning = ref(false);
 
   // 使用 watchEffect 处理 DOM 副作用
   watchEffect(() => {
@@ -35,9 +36,23 @@ export const useAppStore = defineStore('app',()=>{
     }
     const toggleDarkMode = () => {
       console.log('toggleDarkMode called, current value:', darkMode.value)
-      darkMode.value = darkMode.value === 'light' ? 'dark' : 'light';
-      console.log('toggleDarkMode finished, new value:', darkMode.value)
+      
+      // 开始动画
+      isThemeTransitioning.value = true;
+      
+      // 动画结束时切换主题，确保动画过程中页面样式不变
+      setTimeout(() => {
+        // 先切换主题
+        darkMode.value = darkMode.value === 'light' ? 'dark' : 'light';
+        console.log('toggleDarkMode finished, new value:', darkMode.value)
+        
+        // 立即结束动画状态
+        setTimeout(() => {
+          isThemeTransitioning.value = false;
+        }, 50); // 很短的延迟，让新主题样式生效
+      }, 1400); // 在动画即将结束时切换主题（1.6秒动画的85%时间点）
     }
-    return {themeName,darkMode,toggleDarkMode,setThemeName,themeConfig}
+    
+    return {themeName,darkMode,isThemeTransitioning,toggleDarkMode,setThemeName,themeConfig}
   },
 )

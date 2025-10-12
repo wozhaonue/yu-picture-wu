@@ -43,16 +43,6 @@
       required: true,
       message: '该项必填',
       trigger: ['change', 'blur']
-    },
-    {
-      min: 9,
-      message: '至少需要 9 个字符',
-      trigger: ['change', 'blur']
-    },
-    {
-      pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).+$/,
-      message: '必须包含大小写字母、数字和其他字符',
-      trigger: ['change', 'blur']
     }]"
 
       >

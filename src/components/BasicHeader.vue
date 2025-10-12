@@ -1,9 +1,9 @@
 <template>
   <div id="basicHeader">
     <!-- 主题切换蒙版动画 -->
-    <div 
-      class="theme-transition-overlay" 
-      :class="{ 
+    <div
+      class="theme-transition-overlay"
+      :class="{
         'active': appStore.isThemeTransitioning,
         'to-dark': appStore.isThemeTransitioning && appStore.darkMode === 'light',
         'to-light': appStore.isThemeTransitioning && appStore.darkMode === 'dark'
@@ -30,7 +30,7 @@
         </div>
       </div>
     </div>
-    
+
     <a-row :wrap="false">
       <a-col flex="200px" style="margin-left: 16px;">
         <router-link to="/">
@@ -233,6 +233,7 @@ const goToMySpace = () => {
   width: 100vw;
   height: 100vh;
   z-index: 9999;
+
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -243,17 +244,17 @@ const goToMySpace = () => {
   }
 
   &.to-dark {
-    background: radial-gradient(circle at center, 
-      rgba(15, 15, 30, 0.98) 0%, 
-      rgba(10, 20, 40, 0.99) 50%, 
+    background: radial-gradient(circle at center,
+      rgba(15, 15, 30, 0.98) 0%,
+      rgba(10, 20, 40, 0.99) 50%,
       rgba(5, 25, 50, 1) 100%);
     animation: darkTransition 1.6s ease-in-out;
   }
 
   &.to-light {
-    background: radial-gradient(circle at center, 
-      rgba(255, 240, 200, 0.98) 0%, 
-      rgba(255, 200, 0, 0.95) 50%, 
+    background: radial-gradient(circle at center,
+      rgba(255, 240, 200, 0.98) 0%,
+      rgba(255, 200, 0, 0.95) 50%,
       rgba(120, 180, 220, 1) 100%);
     animation: lightTransition 1.6s ease-in-out;
   }
@@ -356,7 +357,7 @@ const goToMySpace = () => {
     width: 40px;
     height: auto;
   }
-  
+
   .title {
     margin-left: 10px;
     font-size: 16px;
@@ -368,7 +369,7 @@ const goToMySpace = () => {
       color: #dcdcdc;
     }
   }
-  
+
   .header-menu {
     padding-inline: 20px;
   }

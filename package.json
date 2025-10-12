@@ -6,6 +6,7 @@
   "scripts": {
     "openapi": "node openapi.config.js",
     "dev": "vite",
+    "purl-build": "vite build",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",

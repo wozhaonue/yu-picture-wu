@@ -13,3 +13,9 @@ const app = useAppStore();
 <style scoped>
 
 </style>
+<style>
+/* 提升全局消息的层级，避免被导航条遮挡 */
+.ant-message {
+  z-index: 2000 !important;
+}
+</style>

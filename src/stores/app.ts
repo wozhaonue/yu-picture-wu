@@ -7,7 +7,7 @@ export const useAppStore = defineStore('app',()=>{
   const themeName = ref('blue');
   const darkMode = ref('light');
   const isThemeTransitioning = ref(false);
-  
+
   // 定时器引用，用于清理
   let themeTransitionTimer: NodeJS.Timeout | null = null;
   let animationEndTimer: NodeJS.Timeout | null = null;
@@ -40,7 +40,7 @@ export const useAppStore = defineStore('app',()=>{
     }
     const toggleDarkMode = () => {
       console.log('toggleDarkMode called, current value:', darkMode.value)
-      
+
       // 清理之前的定时器，防止重复点击造成的问题
       if (themeTransitionTimer) {
         clearTimeout(themeTransitionTimer);
@@ -50,16 +50,16 @@ export const useAppStore = defineStore('app',()=>{
         clearTimeout(animationEndTimer);
         animationEndTimer = null;
       }
-      
+
       // 开始动画
       isThemeTransitioning.value = true;
-      
+
       // 动画结束时切换主题，确保动画过程中页面样式不变
       themeTransitionTimer = setTimeout(() => {
         // 先切换主题
         darkMode.value = darkMode.value === 'light' ? 'dark' : 'light';
         console.log('toggleDarkMode finished, new value:', darkMode.value)
-        
+
         // 立即结束动画状态
         animationEndTimer = setTimeout(() => {
           isThemeTransitioning.value = false;
@@ -69,7 +69,7 @@ export const useAppStore = defineStore('app',()=>{
         }, 50); // 很短的延迟，让新主题样式生效
       }, 1400); // 在动画即将结束时切换主题（1.6秒动画的85%时间点）
     }
-    
+
     return {themeName,darkMode,isThemeTransitioning,toggleDarkMode,setThemeName,themeConfig}
-  },
+  },{persist: true}
 )

@@ -49,6 +49,10 @@ import SpaceOccupancy from '@/components/SpaceAnalysis/SpaceOccupancy.vue'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useLoginUserStore } from '@/stores/user'
+import { useAppStore } from '@/stores/app'
+
+const appStore = useAppStore();
+console.log(appStore.darkMode);
 
 // 定义是否为管理员的变量
 const userStore = useLoginUserStore()

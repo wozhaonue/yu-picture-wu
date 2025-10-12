@@ -23,4 +23,4 @@ export const useLoginUserStore = defineStore('loginUser', () => {
     getLoginUser,
     setLoginUser
   }
-});
+},{persist: true});

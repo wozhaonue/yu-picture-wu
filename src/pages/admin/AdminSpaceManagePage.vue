@@ -94,6 +94,7 @@ import { formatSize } from '@/utils'
 import { SPACE_LEVEL_MAP,SPACE_LEVEL_OPTIONS } from '@/constants/space'
 import { deleteSpaceUsingPost, listSpaceByPageUsingPost } from '@/api/spaceController'
 import { SPACE_TYPE_MAP, SPACE_TYPE_OPTIONS } from '@/constants/teamSpace'
+import { useAppStore } from '@/stores/app'
 const columns = [
   {
     title: 'id',
@@ -135,6 +136,10 @@ const columns = [
   },
 ]
 
+
+const appStore = useAppStore();
+
+console.log(appStore.darkMode);
 
 
 // 定义数据

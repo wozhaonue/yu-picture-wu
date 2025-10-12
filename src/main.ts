@@ -8,11 +8,14 @@ import App from './App.vue';
 import router from './router';
 import VueCropper from 'vue-cropper';
 import 'vue-cropper/dist/index.css'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 // 之前的npm版本为10.8.2
 const app = createApp(App);
 
 app.use(VueCropper);
-app.use(createPinia());
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate)
+app.use(pinia);
 app.use(router);
 app.use(Antd);
 

@@ -1,10 +1,14 @@
 <template>
   <div id="admin-picture-page">
-    <a-flex justify="space-between" style="margin-bottom: 16px;">
+    <a-flex justify="space-between" style="margin-bottom: 16px">
       <h2>图片管理</h2>
       <a-space>
-        <a-button type="primary" href="/add_picture" target="_blank"><PlusOutlined />创建图片</a-button>
-      <a-button type="primary" ghost href="/addBatch_picture" target="_blank"><PlusOutlined />批量创建图片</a-button>
+        <a-button type="primary" href="/add_picture" target="_blank"
+          ><PlusOutlined />创建图片</a-button
+        >
+        <a-button type="primary" ghost href="/addBatch_picture" target="_blank"
+          ><PlusOutlined />批量创建图片</a-button
+        >
       </a-space>
     </a-flex>
     <a-form class="search-form" layout="inline" :model="searchParams" @finish="doSearch">
@@ -16,7 +20,12 @@
         />
       </a-form-item>
       <a-form-item label="分类" name="category">
-        <a-select v-model:value="searchParams.category" placeholder="请选择分类" :options="categoryList" allow-clear />
+        <a-select
+          v-model:value="searchParams.category"
+          placeholder="请选择分类"
+          :options="categoryList"
+          allow-clear
+        />
       </a-form-item>
       <a-form-item class="form-item-tags" label="标签" name="tags">
         <a-select
@@ -27,7 +36,7 @@
           :options="tagsList"
         />
       </a-form-item>
-       <a-form-item class="form-item-tags" label="审核状态" name="reviewStatus">
+      <a-form-item class="form-item-tags" label="审核状态" name="reviewStatus">
         <a-select
           v-model:value="searchParams.reviewStatus"
           placeholder="请选择审核状态"
@@ -46,7 +55,7 @@
       :pagination="pagination"
       @change="doTableChange"
       bordered
-      :scroll="{x: 'max-content', y: 600}"
+      :scroll="{ x: 'max-content', y: 600 }"
     >
       >
       <template #bodyCell="{ column, record }">
@@ -68,8 +77,10 @@
           <div>大小：{{ (record.picSize / 1024).toFixed(2) }}KB</div>
         </template>
         <template v-else-if="column.dataIndex === 'reviewMessage'">
-          <div>审核状态：<a-tag>{{ PIC_REVIEW_STATUS_MAP[record.reviewStatus] }}</a-tag></div>
-          <div>审核信息：{{ record.reviewMessage ?? '-'}}</div>
+          <div>
+            审核状态：<a-tag>{{ PIC_REVIEW_STATUS_MAP[record.reviewStatus] }}</a-tag>
+          </div>
+          <div>审核信息：{{ record.reviewMessage ?? '-' }}</div>
           <div>审核人：{{ record.reviewerId ?? '-' }}</div>
         </template>
         <template v-if="column.dataIndex === 'category'">
@@ -77,38 +88,74 @@
         </template>
         <template v-if="column.dataIndex === 'tags'">
           <a-space wrap>
-            <a-tag color="blue" v-for="tag in JSON.parse(record.tags) || []" :key="tag">{{ tag }}</a-tag>
+            <a-tag color="blue" v-for="tag in JSON.parse(record.tags) || []" :key="tag">{{
+              tag
+            }}</a-tag>
           </a-space>
         </template>
         <template v-else-if="column.key === 'operation'">
-         <a-space>
-          <a-button v-if="record.reviewStatus !== PIC_REVIEW_STATUS_ENUM.PASS" @click="handleReview(record,PIC_REVIEW_STATUS_ENUM.PASS)" type="link">通过</a-button>
-          <a-button v-if="record.reviewStatus !== PIC_REVIEW_STATUS_ENUM.REJECT" @click="handleReview(record,PIC_REVIEW_STATUS_ENUM.REJECT)" type="link" danger>拒绝</a-button>
-
-           <a-popconfirm
-            title="你是否要删除"
-            ok-text="是"
-            cancel-text="否"
-            @confirm="confirm(record.id)"
-            @cancel="cancel"
-          >
-            <a-button type="link" danger>删除</a-button>
-          </a-popconfirm>
-          <a-button @click="editPicture(record.id)" type="link">编辑</a-button>
-         </a-space>
+          <a-space>
+            <a-button
+              v-if="record.reviewStatus !== PIC_REVIEW_STATUS_ENUM.PASS"
+              @click="handleReview(record, PIC_REVIEW_STATUS_ENUM.PASS)"
+              type="link"
+              >通过</a-button
+            >
+            <a-button
+              v-if="record.reviewStatus !== PIC_REVIEW_STATUS_ENUM.REJECT"
+              @click="showDenyModal(record,PIC_REVIEW_STATUS_ENUM.REJECT)"
+              type="link"
+              danger
+              >拒绝</a-button
+            >
+            <a-popconfirm
+              title="你是否要删除"
+              ok-text="是"
+              cancel-text="否"
+              @confirm="confirm(record.id)"
+              @cancel="cancel"
+            >
+              <a-button type="link" danger>删除</a-button>
+            </a-popconfirm>
+            <a-button @click="editPicture(record.id)" type="link">编辑</a-button>
+          </a-space>
         </template>
       </template>
     </a-table>
+     <a-modal
+              v-model:open="open"
+              title="审核表单"
+              :footer="null"
+              :confirm-loading="confirmLoading"
+            >
+              <a-form autocomplete="off" @finish="onFinish()" layout="vertical" :model="formState">
+                <a-form-item label="拒绝原因" name="reviewMessage">
+                  <a-input v-model:value="formState.reviewMessage" placeholder="请输入拒绝原因" :rule="{require: true,message: '该项必填'}" />
+                </a-form-item>
+                <a-form-item>
+                  <a-button type="primary" html-type="submit" style="width: 100%">提交</a-button>
+                </a-form-item>
+              </a-form>
+            </a-modal>
   </div>
 </template>
 <script lang="ts" setup>
-import {PlusOutlined} from '@ant-design/icons-vue'
-import { deletePictureUsingPost, doPictureReviewUsingPost, listPictureByPageUsingPost, listPictureTagCategoryUsingGet } from '@/api/pictureController'
+import { PlusOutlined } from '@ant-design/icons-vue'
+import {
+  deletePictureUsingPost,
+  doPictureReviewUsingPost,
+  listPictureByPageUsingPost,
+  listPictureTagCategoryUsingGet,
+} from '@/api/pictureController'
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { PIC_REVIEW_STATUS_ENUM, PIC_REVIEW_STATUS_MAP, PIC_REVIEW_STATUS_OPTIONS } from '@/constants/picture'
+import {
+  PIC_REVIEW_STATUS_ENUM,
+  PIC_REVIEW_STATUS_MAP,
+  PIC_REVIEW_STATUS_OPTIONS,
+} from '@/constants/picture'
 const router = useRouter()
 const columns = [
   {
@@ -141,7 +188,7 @@ const columns = [
     width: 120,
     fixed: 'left',
   },
-   {
+  {
     title: '审核信息',
     dataIndex: 'reviewMessage',
     width: 150,
@@ -176,35 +223,48 @@ const columns = [
     title: '操作',
     width: 100,
     key: 'operation',
-    fixed: 'right'
+    fixed: 'right',
   },
 ]
 type options = {
-  label: string;
-  value: string;
+  label: string
+  value: string
 }
-const categoryList = ref<options[]>([]);
-const tagsList = ref<options[]>([]);
+const categoryList = ref<options[]>([])
+const tagsList = ref<options[]>([])
 // 获取标签和分类数据
 const getTagsAndCategoryOptions = async () => {
   const res = await listPictureTagCategoryUsingGet()
   // 如果请求成功，则赋值给两个选项数据
   if (res.data.code === 0 && res.data.data) {
-    categoryList.value = res.data.data.categoryList ? res.data.data.categoryList.map((item) => {
-      return{
-        label: item,
-        value: item,
-      }
-    }) : []
+    categoryList.value = res.data.data.categoryList
+      ? res.data.data.categoryList.map((item) => {
+          return {
+            label: item,
+            value: item,
+          }
+        })
+      : []
     // tagsList
-    tagsList.value = res.data.data.tagList ? res.data.data.tagList.map((item) => {
-      return{
-        label: item,
-        value: item,
-      }
-    }) : []
+    tagsList.value = res.data.data.tagList
+      ? res.data.data.tagList.map((item) => {
+          return {
+            label: item,
+            value: item,
+          }
+        })
+      : []
   }
 }
+// 拒绝提交表单
+const open = ref<boolean>(false)
+const confirmLoading = ref<boolean>(false)
+const showDenyModal = (record: API.Picture, reviewStatus: number) => {
+  open.value = true
+  formState.value.id = record.id;
+  formState.value.reviewStatus = reviewStatus;
+}
+const formState = ref<API.PictureReviewRequest>({});
 // 定义数据
 const dataList = ref<API.Picture[]>([])
 const total = ref(0)
@@ -282,22 +342,40 @@ const cancel = () => {
 }
 // 审核函数
 const handleReview = async (record: API.Picture, reviewStatus: number) => {
-  const reviewMessage = reviewStatus === 1 ? '管理员通过审核' : '管理员操作拒绝';
+  const reviewMessage = reviewStatus === 1 ? '管理员通过审核' : '管理员操作拒绝'
   const res = await doPictureReviewUsingPost({
     id: record.id,
     reviewMessage,
     reviewStatus,
   })
-  if(res.data.code === 0){
-    message.success('审核操作成功');
+  if (res.data.code === 0) {
+    message.success('审核操作成功')
     // 重新拉取表格数据
-    fetchData();
-  }else {
-    message.error('审核操作失败');
-    console.error('审核操作失败',res.data.message);
+    fetchData()
+  } else {
+    message.error('审核操作失败')
+    console.error('审核操作失败', res.data.message)
   }
 }
-
+const onFinish = async () => {
+  const reviewMessage = formState.value.reviewMessage;
+  confirmLoading.value = true;
+  const res = await doPictureReviewUsingPost({
+    id: formState.value.id,
+    reviewMessage,
+    reviewStatus:formState.value.reviewStatus,
+  })
+  if (res.data.code === 0) {
+    message.success('审核操作成功')
+    // 重新拉取表格数据
+    fetchData()
+  } else {
+    message.error('审核操作失败')
+    console.error('审核操作失败', res.data.message)
+  }
+  confirmLoading.value = false;
+  open.value =false;
+}
 onMounted(() => {
   fetchData()
   getTagsAndCategoryOptions()

@@ -145,8 +145,9 @@ const fetchData = async () => {
       lazyLoading()
     })
   } else {
-    message.error('网络异常')
+    message.error('服务器异常')
     console.error(res, '获取列表信息失败')
+    router.push('/')
   }
   loading.value = false
 }

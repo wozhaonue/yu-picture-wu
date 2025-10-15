@@ -42,7 +42,7 @@ myAxios.interceptors.response.use(
   function (error) {
     console.log(error.code);
     const errorCode = error.code || '';
-    if(errorCode === 'ERR_NETWORK'){
+    if(errorCode === 'ERR_NETWORK'){ // 此为axios库定义的请求错误对象
       message.error('网络连接失败，请检查网络连接');
     }
     // Any status codes that falls outside the range of 2xx cause this function to trigger

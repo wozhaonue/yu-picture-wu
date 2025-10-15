@@ -103,7 +103,6 @@ import checkAccess from '@/access/checkAccess'
 import { UserOutlined } from '@ant-design/icons-vue';
 import { useAppStore } from '@/stores/app'
 
-const app = useAppStore();
 const appStore = useAppStore()
 const loginUserStore = useLoginUserStore()
 //远程获取登录状态
@@ -167,15 +166,15 @@ const filterMenuItems = (menuItems = [] as MenuProps['items']) => {
     const routeItem = menuToItem(item)
     // 如果不属于路由中的path，直接通过
     if (!routeItem) {
-      console.log('不属于自身路由')
+      // console.log('不属于自身路由')
       return true
     }
     // 如果路由中hideInMenu为true，进行隐藏
     if (routeItem.meta && routeItem.meta?.hideInMenu) {
-      console.log('隐藏路由', routeItem.path)
+      // console.log('隐藏路由', routeItem.path)
       return false
     }
-    console.log(routeItem.path, checkAccess(loginUser.value, routeItem.meta?.access as string))
+    // console.log(routeItem.path, checkAccess(loginUser.value, routeItem.meta?.access as string))
     return checkAccess(loginUser.value, routeItem.meta?.access as string)
   })
 }

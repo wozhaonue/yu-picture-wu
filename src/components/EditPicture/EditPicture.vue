@@ -66,7 +66,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, h, onMounted, onUnmounted, watchEffect } from 'vue'
+import { computed, h, onUnmounted, watch } from 'vue'
 import { ref } from 'vue'
 
 import {
@@ -95,10 +95,14 @@ interface Props {
 }
 const props = defineProps<Props>()
 const visible = ref(false)
+// 每次弹窗打开只自动进入一次编辑
+const hasAutoEnteredEdit = ref(false)
 
 //打开弹窗
 const openModal = () => {
   visible.value = true
+  // 重置自动进入标记（本次打开弹窗可再次自动进入编辑）
+  hasAutoEnteredEdit.value = false
   // console.log(props.space);
   // console.log(isTeamSpace.value);
     if(props.imgUrl){
@@ -223,6 +227,21 @@ const initWebSocket = () => {
     message.info(msg.message);
     console.log('收到错误消息',msg);
   })
+  // 监听自动重连相关事件（仅日志，不影响 UI）
+  websocket.on('reconnecting', ({ attempt, delay }) => {
+    console.log(`WebSocket 正在重连，第 ${attempt} 次，延迟约 ${Math.round(delay)}ms`)
+  })
+  websocket.on('reconnect_failed', ({ attempts }) => {
+    console.error(`WebSocket 重连失败，已尝试 ${attempts} 次`)
+  })
+  websocket.on('open', () => {
+    console.log('WebSocket 连接成功（可能为重连后的连接）')
+    // 在弹窗打开且为团队空间时，连接成功后自动进入编辑（每次弹窗打开只触发一次）
+    if (visible.value && isTeamSpace.value && !hasAutoEnteredEdit.value && canEnterEdit.value) {
+      enterEdit()
+      hasAutoEnteredEdit.value = true
+    }
+  })
   // 监听进入编辑状态信息
   websocket.on(PICTURE_EDIT_MESSAGE_TYPE_ENUM.ENTER_EDIT,(msg) => {
     message.info(msg.message);
@@ -254,6 +273,7 @@ const initWebSocket = () => {
     console.log('收到退出编辑状态信息',msg)
     editUser.value = null
   })
+  enterEdit();
 }
 
 // 发送webSocket信息的函数
@@ -280,23 +300,19 @@ const editPicture = (action: string) => {
     })
   }
 }
-watchEffect(() => {
-  if(isTeamSpace.value){
+// 仅在团队空间且弹窗可见时建立连接；可见性变更时触发
+watch([visible, isTeamSpace], ([isVisible, team]) => {
+  if (team && isVisible) {
     initWebSocket()
   }
 })
 
-// 当页面加载时，如果此时没有用户进行编辑状态，则直接进入编辑状态
-// onMounted(() => {
-//   if(canEnterEdit.value){
-//     enterEdit();
-//   }
-// })
 onUnmounted(() => {
   if(websocket){
     websocket.disconnect()
   }
   editUser.value = null
+  hasAutoEnteredEdit.value = false
 })
 // 关闭弹窗
 const closeModal = () => {
@@ -305,6 +321,7 @@ const closeModal = () => {
   }
   editUser.value = null
   visible.value = false
+  hasAutoEnteredEdit.value = false
 }
 </script>
 

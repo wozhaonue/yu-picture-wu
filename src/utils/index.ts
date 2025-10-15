@@ -104,17 +104,44 @@ export default class PictureEditWebSocket {
   private pictureId: number
   private socket: WebSocket | null
   private eventHandlers: any
+  // 自动重连相关状态
+  private reconnectAttempts: number
+  private maxReconnectAttempts: number
+  private baseReconnectDelay: number
+  private maxReconnectDelay: number
+  private reconnectTimer: any
+  private manuallyClosed: boolean
+  private connecting: boolean
 
   constructor(pictureId: number) {
     this.pictureId = pictureId // 当前编辑的图片 ID
     this.socket = null // WebSocket 实例
     this.eventHandlers = {} // 自定义事件处理器
+    // 初始化自动重连参数
+    this.reconnectAttempts = 0
+    this.maxReconnectAttempts = Infinity // 如需限制最大重连次数，可改为具体数值
+    this.baseReconnectDelay = 1000 // 初始重连延迟 1s
+    this.maxReconnectDelay = 10000 // 最大重连延迟 10s
+    this.reconnectTimer = null
+    this.manuallyClosed = false
+    this.connecting = false
   }
 
   /**
    * 初始化 WebSocket 连接
    */
   connect() {
+    // 避免重复连接
+    if (this.connecting) {
+      return
+    }
+    this.connecting = true
+    this.manuallyClosed = false
+    // 若存在已安排的重连定时器，清除之
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer)
+      this.reconnectTimer = null
+    }
     const DEV_BASE_URL=  'ws://localhost:8123'
     const PROD_BASE_URL = 'ws://106.53.8.134'
     const url = DEV_BASE_URL + `/api/ws/picture/edit?pictureId=${this.pictureId}`
@@ -126,6 +153,13 @@ export default class PictureEditWebSocket {
     // 监听连接成功事件
     this.socket.onopen = () => {
       console.log('WebSocket 连接已建立')
+      // 重置重连状态
+      this.connecting = false
+      this.reconnectAttempts = 0
+      if (this.reconnectTimer) {
+        clearTimeout(this.reconnectTimer)
+        this.reconnectTimer = null
+      }
       this.triggerEvent('open')
     }
 
@@ -142,13 +176,22 @@ export default class PictureEditWebSocket {
     // 监听连接关闭事件
     this.socket.onclose = (event) => {
       console.log('WebSocket 连接已关闭:', event)
+      this.connecting = false
       this.triggerEvent('close', event)
+      // 非手动关闭则触发自动重连
+      if (!this.manuallyClosed) {
+        this.scheduleReconnect()
+      }
     }
 
     // 监听错误事件
     this.socket.onerror = (error) => {
       console.error('WebSocket 发生错误:', error)
       this.triggerEvent('error', error)
+      // 发生错误时也尝试重连（避免某些环境下不触发 close）
+      if (!this.manuallyClosed) {
+        this.scheduleReconnect()
+      }
     }
   }
 
@@ -157,7 +200,19 @@ export default class PictureEditWebSocket {
    */
   disconnect() {
     if (this.socket) {
-      this.socket.close()
+      // 标记为手动关闭，避免自动重连
+      this.manuallyClosed = true
+      // 取消已有的重连计划
+      if (this.reconnectTimer) {
+        clearTimeout(this.reconnectTimer)
+        this.reconnectTimer = null
+      }
+      try {
+        this.socket.close()
+      } catch (e) {
+        // ignore
+      }
+      this.socket = null
       console.log('WebSocket 连接已手动关闭')
     }
   }
@@ -197,6 +252,39 @@ export default class PictureEditWebSocket {
     if (handlers) {
       handlers.forEach((handler: any) => handler(data))
     }
+  }
+
+  /**
+   * 计算当前重连延迟（指数退避 + 随机抖动）
+   */
+  private getReconnectDelay(): number {
+    const exp = Math.min(this.reconnectAttempts, 6)
+    const base = this.baseReconnectDelay * Math.pow(2, exp)
+    const delay = Math.min(base, this.maxReconnectDelay)
+    const jitter = Math.random() * 0.3 * delay // 30% 抖动
+    return delay + jitter
+  }
+
+  /**
+   * 安排一次自动重连
+   */
+  private scheduleReconnect() {
+    // 已安排重连，或超过最大次数，则跳过
+    if (this.reconnectTimer) {
+      return
+    }
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      this.triggerEvent('reconnect_failed', { attempts: this.reconnectAttempts })
+      return
+    }
+    const delay = this.getReconnectDelay()
+    this.reconnectAttempts += 1
+    this.triggerEvent('reconnecting', { attempt: this.reconnectAttempts, delay })
+    this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = null
+      console.log(`尝试第 ${this.reconnectAttempts} 次重连...`)
+      this.connect()
+    }, delay)
   }
 }
 

@@ -47,6 +47,7 @@
         :pageSize="searchParams.pageSize"
         :total="total"
         @change="changePage"
+        :showSizeChanger="false"
       ></a-pagination>
     </div>
   </div>

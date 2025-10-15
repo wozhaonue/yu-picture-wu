@@ -1,30 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomePage from '@/pages/HomePage.vue'
-import UserLoginPage from '@/pages/user/UserLoginPage.vue'
-import UserRegisterPage from '@/pages/user/UserRegisterPage.vue'
-import AdminUserManagePage from '@/pages/admin/AdminUserManagePage.vue'
-import AdminPictureManagePage from '@/pages/admin/AdminPictureManagePage.vue'
-import UserProfilePage from '@/pages/user/UserProfilePage.vue'
-import NoAuthPage from '@/pages/NoAuthPage.vue'
-import PictureDetailPage from '@/pages/PictureDetailPage.vue'
 import ACCESS_ENUM from '@/access/accessEnum'
-import AddPicturePage from '@/pages/AddPicturePage.vue'
-import AddPictureBatchPage from '@/pages/AddPictureBatchPage.vue'
-import AdminSpaceManagePage from '@/pages/admin/AdminSpaceManagePage.vue'
-import AddSpacePage from '@/pages/AddSpacePage.vue'
-import MySpacePage from '@/pages/MySpacePage.vue'
-import SpaceDetail from '@/pages/SpaceDetail.vue'
-import SearchPicturePage from '@/pages/SearchPicturePage.vue'
-import SpaceAnalysis from '@/pages/user/SpaceAnalysis.vue'
-import NoResourcePage from '@/pages/NoResourcePage.vue'
-import SpaceUserManagePage from '@/pages/SpaceUserManagePage.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
       name: 'home',
-      component: HomePage,
+      component: () => import('@/pages/HomePage.vue'),
       meta:{
        hideInMenu: false,
       }
@@ -32,17 +14,17 @@ const router = createRouter({
     {
       path: '/user/login',
       name: 'login',
-      component: UserLoginPage,
+      component: () => import('@/pages/user/UserLoginPage.vue'),
     },
     {
       path: '/user/register',
       name: 'register',
-      component: UserRegisterPage,
+      component: () => import('@/pages/user/UserRegisterPage.vue'),
     },
     {
       path: '/admin/userManage',
       name: 'userManage',
-      component: AdminUserManagePage,
+      component: () => import('@/pages/admin/AdminUserManagePage.vue'),
       meta:{
         access: ACCESS_ENUM.ADMIN,
       }
@@ -50,7 +32,7 @@ const router = createRouter({
     {
       path: '/user/profile',
       name: 'profile',
-      component: UserProfilePage,
+      component: () => import('@/pages/user/UserProfilePage.vue'),
       meta:{
         access: ACCESS_ENUM.USER,
         hideInMenu: true,
@@ -58,28 +40,28 @@ const router = createRouter({
     },
     {
       path: '/noAuth',
-      component: NoAuthPage,
+      component: () => import('@/pages/NoAuthPage.vue'),
       meta:{
         hideInMenu: true,
       }
     },
     {
       path: '/noResource',
-      component: NoResourcePage,
+      component: () => import('@/pages/NoResourcePage.vue'),
       meta:{
         hideInMenu: true,
       }
     },
     {
       path: '/add_picture',
-      component: AddPicturePage,
+      component: () => import('@/pages/AddPicturePage.vue'),
       meta:{
         access: ACCESS_ENUM.USER,
       }
     },
     {
       path: '/add_space',
-      component: AddSpacePage,
+      component: () => import('@/pages/AddSpacePage.vue'),
       meta:{
         access: ACCESS_ENUM.USER,
       }
@@ -87,11 +69,11 @@ const router = createRouter({
     {
       path: '/my_space',
       name: '我的空间',
-      component: MySpacePage,
+      component: () => import('@/pages/MySpacePage.vue'),
     },
     {
       path: '/addBatch_picture',
-      component: AddPictureBatchPage,
+      component: () => import('@/pages/AddPictureBatchPage.vue'),
       name: '批量创建图片',
       meta: {
         access: ACCESS_ENUM.USER,
@@ -100,7 +82,7 @@ const router = createRouter({
     {
       path: '/admin/pictureManage',
       name: '图片管理',
-      component: AdminPictureManagePage,
+      component: () => import('@/pages/admin/AdminPictureManagePage.vue'),
       meta: {
         access: ACCESS_ENUM.ADMIN,
       }
@@ -108,7 +90,7 @@ const router = createRouter({
     {
       path: '/admin/spaceManage',
       name: '空间管理',
-      component: AdminSpaceManagePage,
+      component: () => import('@/pages/admin/AdminSpaceManagePage.vue'),
       meta: {
         access: ACCESS_ENUM.ADMIN,
       }
@@ -116,30 +98,30 @@ const router = createRouter({
     {
       path: '/picture/:id',
       name: '图片详情',
-      component: PictureDetailPage,
+      component: () => import('@/pages/PictureDetailPage.vue'),
       props: true
     },
     {
       path: '/space/:id',
       name: '空间详情',
-      component: SpaceDetail,
+      component: () => import('@/pages/SpaceDetail.vue'),
       props: true
     },
     {
       path: '/spaceUserManage/:id',
       name: '空间成员管理',
-      component: SpaceUserManagePage,
+      component: () => import('@/pages/SpaceUserManagePage.vue'),
       props: true
     },
     {
       path: '/search_picture',
       name: '图片找相似',
-      component: SearchPicturePage,
+      component: () => import('@/pages/SearchPicturePage.vue'),
     },
     {
       path: '/user/spaceAnalysis',
       name: '图片分析',
-      component: SpaceAnalysis,
+      component: () => import('@/pages/user/SpaceAnalysis.vue'),
     },
     // 404 通配符路由 - 必须放在所有路由的最后
     {

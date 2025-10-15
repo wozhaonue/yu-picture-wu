@@ -285,6 +285,13 @@ watchEffect(() => {
     initWebSocket()
   }
 })
+
+// 当页面加载时，如果此时没有用户进行编辑状态，则直接进入编辑状态
+// onMounted(() => {
+//   if(canEnterEdit.value){
+//     enterEdit();
+//   }
+// })
 onUnmounted(() => {
   if(websocket){
     websocket.disconnect()

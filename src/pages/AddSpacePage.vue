@@ -102,7 +102,7 @@ const handleSubmit = async () => {
       path: `/space/${route.query?.id ?? res.data.data}`,
     })
   } else {
-    message.error('操作失败')
+    message.warn(res.data.message)
     console.error('操作失败', res.data.message)
   }
   loading.value = false

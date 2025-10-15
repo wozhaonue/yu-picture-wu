@@ -2,7 +2,7 @@ import axios from 'axios'
 import { message } from 'ant-design-vue'
 
 const DEV_BASE_URL=  'http://localhost:8123'
-const PROD_BASE_URL = 'http://106.53.8.134'
+const PROD_BASE_URL = 'https://106.53.8.134'
 // 创建 Axios 实例
 const myAxios = axios.create({
   baseURL: DEV_BASE_URL,

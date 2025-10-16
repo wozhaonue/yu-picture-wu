@@ -143,7 +143,7 @@ export default class PictureEditWebSocket {
       this.reconnectTimer = null
     }
     const DEV_BASE_URL=  'ws://localhost:8123'
-    const PROD_BASE_URL = 'ws://106.53.8.134'
+    const PROD_BASE_URL = 'wss://bizshare.online'
     const url = DEV_BASE_URL + `/api/ws/picture/edit?pictureId=${this.pictureId}`
     this.socket = new WebSocket(url)
 

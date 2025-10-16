@@ -50,9 +50,7 @@ import {
 } from '@/api/pictureController'
 import PictureList from '@/components/PictureList/PictureList.vue'
 import { message } from 'ant-design-vue'
-import {  onMounted, reactive, ref, nextTick } from 'vue'
-import { useRouter } from 'vue-router'
-// import checkAccess from '../access/checkAccess';
+import {  onMounted, reactive, ref } from 'vue'
 
 const dataList = ref<API.PictureVO[]>([])
 const total = ref<number>(0)
@@ -97,10 +95,7 @@ const fetchData = async () => {
     console.log('获取数据成功')
     dataList.value = res.data.data.records ?? []
     total.value = Number(res.data.data.total) ? Number(res.data.data.total) : 0
-    // 数据加载完成后，等待DOM更新再执行懒加载 确保懒加载时可以获取到懒加载的image的dom元素
-    nextTick(() => {
-      lazyLoading()
-    })
+    // 数据加载完成
   } else {
     message.error('网络异常')
     console.error(res, '获取列表信息失败')
@@ -113,42 +108,7 @@ const doSearch = () => {
   fetchData()
 }
 
-// 懒加载图片数据 通过提前存储url，之后再赋值给url属性来实现
-const lazyLoading = () => {
-  const lazyImageList = document.querySelectorAll('.lazy-image')
-  console.log('找到懒加载图片数量:', lazyImageList.length)
-
-  // 让图片提前50%开始加载
-  const option = { rootMargin: '0px 0px 30% 0px' }
-
-  if ('IntersectionObserver' in window) {
-    const imageObserver = new IntersectionObserver((entries, observer) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const img = entry.target as HTMLImageElement
-          const src = img.getAttribute('data-src')
-          // console.log('开始加载图片:', src)
-          if (src) {
-            img.src = src
-            img.onload = () => {
-              // console.log('图片加载完成:', src)
-            }
-            img.onerror = () => {
-              console.error('图片加载失败:', src)
-            }
-            observer.unobserve(img)
-          }
-        }
-      })
-    }, option)
-
-    lazyImageList.forEach((lazyImage) => {
-      imageObserver.observe(lazyImage)
-    })
-  } else {
-    console.log('IntersectionObserver 不被支持，无法实现懒加载。')
-  }
-}
+// 已移除未生效的懒加载逻辑，页面功能保持不变
 /**
  * 分页器的change事件的回调函数
  */

@@ -13,7 +13,7 @@
         >
           <!-- 图片封面 -->
           <div class="picture-cover">
-            <img :src="picture.thumbnailUrl" />
+            <img :src="picture.thumbnailUrl" loading="lazy" />
             <div class="picture-overlay">
               <div class="overlay-content">
                 <h3 class="picture-title">{{ picture.name }}</h3>

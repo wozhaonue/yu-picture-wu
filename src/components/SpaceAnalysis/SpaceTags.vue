@@ -82,7 +82,7 @@ const getSpaceDetail = async () => {
     spaceAnalysisData.value = data
     console.log(spaceAnalysisData.value)
   } else {
-    // message.error('获取失败')
+    message.error(res.data.message)
     console.error(res.data.message)
   }
 }

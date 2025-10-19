@@ -143,7 +143,7 @@ const fetchData = async () => {
     total.value = Number(res.data.data.total) ? Number(res.data.data.total) : 0
     // 数据加载完成
   } else {
-    message.error('服务器异常')
+    message.error(res.data.message)
     console.error(res, '获取列表信息失败')
     router.push('/')
   }

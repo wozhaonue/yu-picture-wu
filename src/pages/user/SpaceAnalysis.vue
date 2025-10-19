@@ -32,7 +32,7 @@
         ><SpaceUserUpload :isAdmin="isAdmin" :space-id="spaceId" :query-all="queryAll" :query-public="queryPublic"
       /></a-col>
       <a-col :span="12">
-        <SpaceUsingRank :isAdmin="isAdmin" v-if="isAdmin" :space-id="spaceId" :query-all="queryAll" :query-public="queryPublic" />
+        <SpaceUsingRank :isAdmin="isAdmin" v-if="isAdmin && (queryAll || queryPublic)" :space-id="spaceId" :query-all="queryAll" :query-public="queryPublic" />
       </a-col>
     </a-row>
   </div>
@@ -60,7 +60,7 @@ const userData = computed(() => userStore.loginUser)
 const isAdmin = computed(() => (userData.value.userRole === 'admin' ? true : false))
 const route = useRoute()
 const spaceId = computed(() => {
-  return route.query?.spaceId
+  return route.query?.spaceId as string
 })
 const queryAll = computed(() => {
   return route.query?.queryAll === 'true' ? true : false

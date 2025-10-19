@@ -97,7 +97,7 @@ const fetchData = async () => {
     return;
   }
   const res = await listSpaceUserUsingPost({
-    ...searchParams,
+    spaceId: props.id,
   })
   if (res.data.data && res.data.code === 0) {
     message.success('获取数据成功')

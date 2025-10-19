@@ -39,7 +39,7 @@ use([
 const app = useAppStore()
 
 interface Props {
-  spaceId?: number
+  spaceId?: string
   queryAll?: boolean
   isAdmin?: boolean
   queryPublic?: boolean

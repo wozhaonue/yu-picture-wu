@@ -55,7 +55,7 @@ use([
 const app = useAppStore()
 const topNData = ref<number>(10)
 interface Props {
-  spaceId?: number
+  spaceId?: string
   queryAll?: boolean
   isAdmin: false,
   queryPublic?: boolean

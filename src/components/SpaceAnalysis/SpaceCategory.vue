@@ -38,7 +38,7 @@ use([
 // 主题配置
 const app =useAppStore();
 interface Props {
-  spaceId?: number
+  spaceId?: string
   queryAll?: boolean
   queryPublic?: boolean
   isAdmin?: boolean

@@ -76,7 +76,7 @@ const userStore = useLoginUserStore()
 const userData = computed(() => userStore.loginUser)
 const userId = ref(userData.value.id)
 interface Props {
-  spaceId?: number
+  spaceId?: string
   queryAll?: boolean
   isAdmin?: boolean
   queryPublic?: boolean

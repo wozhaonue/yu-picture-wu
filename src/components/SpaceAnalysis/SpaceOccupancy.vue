@@ -40,7 +40,7 @@ import { message } from 'ant-design-vue';
 import { onMounted, ref } from 'vue';
 
 interface Props {
-  spaceId?: number
+  spaceId?: string
   queryAll?: boolean
   isAdmin?: boolean
   queryPublic?: boolean

@@ -78,8 +78,8 @@ const beforeUpload = (file: UploadProps['fileList'][number]) => {
 
 </script>
 <style lang="scss" scoped>
-@import '../styles/variable.module.scss';
-@import '../styles/mixins.scss';
+@use '../styles/variable.module' as *;
+@use '../styles/mixins' as *;
 #picture-upload {
   :deep(.ant-upload) {
     width: 100% !important;

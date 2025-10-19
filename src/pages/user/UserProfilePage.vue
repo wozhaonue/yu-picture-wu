@@ -55,8 +55,8 @@ onMounted(fetchData);
 
 </script>
 <style lang="scss" scoped>
-@import '../../styles/variable.module.scss';
-@import '../../styles/mixins.scss';
+@use '../../styles/variable.module' as *;
+@use '../../styles/mixins' as *;
 #user-profile-page {
   height: 80vh;
   @include flex-center();

@@ -48,8 +48,8 @@ const collapsed = ref(true)
 </script>
 
 <style lang="scss" scoped>
-@import '../styles/variable.module.scss';
-@import '../styles/mixins.scss';
+@use '../styles/variable.module' as *;
+@use '../styles/mixins' as *;
 #basicLayout {
   .fixed-header {
     @include fixed-header($header-height, $z-index-fixed);

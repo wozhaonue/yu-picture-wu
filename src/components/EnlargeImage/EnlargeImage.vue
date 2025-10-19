@@ -179,8 +179,8 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@import '../../styles/variable.module.scss';
-@import '../../styles/mixins.scss';
+@use '../../styles/variable.module' as *;
+@use '../../styles/mixins' as *;
 .ai-enlarge-space {
   @include center-text;
 }

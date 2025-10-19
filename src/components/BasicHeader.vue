@@ -221,8 +221,8 @@ const goToMySpace = () => {
 }
 </script>
 <style lang="scss" scoped>
-@import '../styles/variable.module.scss';
-@import '../styles/mixins.scss';
+@use '../styles/variable.module' as *;
+@use '../styles/mixins' as *;
 
 /* 主题切换蒙版动画样式 */
 .theme-transition-overlay {

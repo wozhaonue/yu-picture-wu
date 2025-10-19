@@ -70,8 +70,8 @@ const dologinRequest = async(values: API.UserLoginRequest) => {
 };
 </script>
 <style lang="scss" scoped>
-@import '../../styles/variable.module.scss';
-@import '../../styles/mixins.scss';
+@use '../../styles/variable.module' as *;
+@use '../../styles/mixins' as *;
 #user-login-page {
   @include page-container(500px, $spacing-lg, 50px);
 

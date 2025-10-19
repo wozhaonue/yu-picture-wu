@@ -24,6 +24,7 @@ import {
 import VChart from 'vue-echarts'
 import { MaxSize, whatSize } from '@/utils'
 import { useAppStore } from '@/stores/app'
+import router from '@/router'
 
 // 注册必要的组件
 use([
@@ -94,7 +95,11 @@ const getSpaceDetail = async () => {
     spaceAnalysisData.value = data
     console.log(spaceAnalysisData.value)
   } else {
-    // message.error('获取失败')
+    message.error(res.data.message)
+    if(res.data.code === 40101){
+      message.error('无权限访问此页面')
+      router.push('/')
+    }
     console.error(res.data.message)
   }
 }

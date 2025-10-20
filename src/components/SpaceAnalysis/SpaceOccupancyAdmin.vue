@@ -78,13 +78,12 @@ const getSpaceDetail = async () => {
 const colors = ['#5070dd', '#b6d634', '#505372']
 // 多系列柱状图配置
 const option = computed(() => {
-  const dataCountList = computed(() => {
-    return [spaceAnalysisData.value.usedCount || 0];
-  })
-  const calDataSizeList = computed(() => {
-    const sizeInMB = (Number(spaceAnalysisData.value.usedSize || 0) / (1024 * 1024)).toFixed(2);
-    return [Number(sizeInMB)];
-  })
+  // 计算图片数量数组
+  const dataCountList = [spaceAnalysisData.value.usedCount || 0]
+  
+  // 计算转换后的大小数组（MB）
+  const calDataSizeList = [Number((Number(spaceAnalysisData.value.usedSize || 0) / (1024 * 1024)).toFixed(2))]
+  
   return {
   color: colors,
   // 工具提示
@@ -150,7 +149,7 @@ const option = computed(() => {
     {
       name: '图片数量',
       type: 'bar',
-      data: dataCountList.value,
+      data: dataCountList,
       itemStyle: {
         color: '#5470c6',
       },
@@ -158,7 +157,7 @@ const option = computed(() => {
     {
       name: '总大小',
       type: 'bar',
-      data: calDataSizeList.value,
+      data: calDataSizeList,
       yAxisIndex: 1,
       itemStyle: {
         color: '#91cc75',

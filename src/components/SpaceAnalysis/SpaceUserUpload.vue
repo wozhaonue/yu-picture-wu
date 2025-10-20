@@ -88,16 +88,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 const timeDimension = ref<string>('day')
 const spaceAnalysisData = ref<API.SpaceUserAnalyzeResponse[]>([])
-const dataName = computed(() => {
-  return spaceAnalysisData.value.map((item) => {
-    return item.period
-  })
-})
-const dataCount = computed(() => {
-  return spaceAnalysisData.value.map((item) => {
-    return item.count
-  })
-})
+
 /**
  * 获取空间详情
  */
@@ -132,37 +123,45 @@ const onSearch = (value: string) => {
 }
 const colors = ['#5070dd', '#b6d634', '#505372']
 // 多系列柱状图配置
-const option = computed(() => ({
-  color: colors,
-  // 工具提示
-  tooltip: {
-    trigger: 'axis',
-    axisPointer: {
-      type: 'cross',
-    },
-  },
-  // X轴配置
-  xAxis: {
-    type: 'category',
-    data: dataName.value,
-  },
-  // Y轴配置
-  yAxis: {
-    type: 'value',
-  },
-  // 系列数据
-  series: [
-    {
-      name: '上传图片数量',
-      type: 'line',
-      data: dataCount.value,
-      itemStyle: {
-        color: '#5470c6',
+const option = computed(() => {
+  // 计算时间段数组
+  const dataName = spaceAnalysisData.value.map((item) => item.period)
+  
+  // 计算数量数组
+  const dataCount = spaceAnalysisData.value.map((item) => item.count)
+  
+  return {
+    color: colors,
+    // 工具提示
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'cross',
       },
-      smooth: true,
     },
-  ],
-}))
+    // X轴配置
+    xAxis: {
+      type: 'category',
+      data: dataName,
+    },
+    // Y轴配置
+    yAxis: {
+      type: 'value',
+    },
+    // 系列数据
+    series: [
+      {
+        name: '上传图片数量',
+        type: 'line',
+        data: dataCount,
+        itemStyle: {
+          color: '#5470c6',
+        },
+        smooth: true,
+      },
+    ],
+  }
+})
 watch([timeDimension, userId], () => {
   getSpaceDetail()
 }, { immediate: false })

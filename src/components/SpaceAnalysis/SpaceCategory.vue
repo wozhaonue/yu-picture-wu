@@ -50,27 +50,6 @@ const props = withDefaults(defineProps<Props>(), {
   isAdmin: false,
 })
 const spaceAnalysisData = ref<API.SpaceCategoryAnalyzeResponse[]>([])
-const dataName = computed(() => {
-  return spaceAnalysisData.value.map((item) => {
-    return item.category
-  })
-})
-const dataCountList = computed(() => {
-  return spaceAnalysisData.value.map((item) => {
-    return item.count
-  })
-})
-const dataSizetList = computed(() => {
-  return spaceAnalysisData.value.map((item) => {
-    return item.totalSize
-  })
-})
-const maxSizeuUit = computed(() => MaxSize(dataSizetList.value));
-const calDataSizeList = computed(() => {
-  return dataSizetList.value.map((item) => {
-    return whatSize(item, maxSizeuUit.value);
-  })
-})
 
 /**
  * 获取空间详情
@@ -106,7 +85,23 @@ const getSpaceDetail = async () => {
 
 const colors = ['#5070dd', '#b6d634', '#505372']
 // 多系列柱状图配置
-const option = computed(() => ({
+const option = computed(() => {
+  // 计算分类名称数组
+  const dataName = spaceAnalysisData.value.map((item) => item.category)
+  
+  // 计算图片数量数组
+  const dataCountList = spaceAnalysisData.value.map((item) => item.count)
+  
+  // 计算总大小数组
+  const dataSizetList = spaceAnalysisData.value.map((item) => item.totalSize)
+  
+  // 计算最大大小单位
+  const maxSizeuUit = MaxSize(dataSizetList)
+  
+  // 计算转换后的大小数组
+  const calDataSizeList = dataSizetList.map((item) => whatSize(item, maxSizeuUit))
+  
+  return {
   color: colors,
   // 工具提示
   tooltip: {
@@ -124,7 +119,7 @@ const option = computed(() => ({
   // X轴配置
   xAxis: {
     type: 'category',
-    data: dataName.value,
+    data: dataName,
     axisTick: {
       alignWithLabel: true,
     },
@@ -162,7 +157,7 @@ const option = computed(() => ({
       },
       axisLabel: {
         formatter: function (value: string) {
-          return value + ' ' + maxSizeuUit.value
+          return value + ' ' + maxSizeuUit
         }
       },
     },
@@ -173,7 +168,7 @@ const option = computed(() => ({
     {
       name: '图片数量',
       type: 'bar',
-      data: dataCountList.value,
+      data: dataCountList,
       itemStyle: {
         color: '#5470c6',
       },
@@ -181,14 +176,15 @@ const option = computed(() => ({
     {
       name: '总大小',
       type: 'bar',
-      data: calDataSizeList.value,
+      data: calDataSizeList,
       yAxisIndex: 1,
       itemStyle: {
         color: '#91cc75',
       },
     },
   ],
-}))
+}
+})
 onMounted(() => {
   getSpaceDetail()
 })

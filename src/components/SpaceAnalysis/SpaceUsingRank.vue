@@ -95,59 +95,62 @@ const getSpaceDetail = async () => {
 
 const colors = ['#5070dd', '#b6d634', '#505372']
 // 多系列柱状图配置
-const option = computed(() =>{
-  const spaceName = spaceAnalysisData.value.map((item) => item.spaceName);
-  const usageData = spaceAnalysisData.value.map((item) => (item.totalSize / (1024* 1024)).toFixed(2))
+const option = computed(() => {
+  // 计算空间名称数组
+  const spaceName = spaceAnalysisData.value.map((item) => item.spaceName)
+  
+  // 计算使用量数据数组（转换为MB）
+  const usageData = spaceAnalysisData.value.map((item) => (item.totalSize / (1024 * 1024)).toFixed(2))
+  
   return {
-  color: colors,
-  // 工具提示
-  tooltip: {
-    trigger: 'axis',
-    axisPointer: {
-      type: 'cross',
+    color: colors,
+    // 工具提示
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'cross',
+      },
     },
-  },
-  // X轴配置
-  xAxis: {
-    type: 'category',
-    data: spaceName,
-    axisTick: {
-      alignWithLabel: true,
+    // X轴配置
+    xAxis: {
+      type: 'category',
+      data: spaceName,
+      axisTick: {
+        alignWithLabel: true,
+      },
     },
-  },
-  // Y轴配置
-  yAxis: [
-    {
-      type: 'value',
-      name: '空间使用量(MB)',
-      position: 'left',
-      alignTicks: true,
-      minInterval: 1,
-      axisLine: {
-        onZero: false,
-        show: true,
-        lineStyle: {
-          color: colors[0],
+    // Y轴配置
+    yAxis: [
+      {
+        type: 'value',
+        name: '空间使用量(MB)',
+        position: 'left',
+        alignTicks: true,
+        minInterval: 1,
+        axisLine: {
+          onZero: false,
+          show: true,
+          lineStyle: {
+            color: colors[0],
+          },
+        },
+        axisLabel: {
+          formatter: '{value}MB',
         },
       },
-      axisLabel: {
-        formatter: '{value}MB',
+    ],
+    // 系列数据
+    series: [
+      {
+        name: '空间使用量(MB)',
+        type: 'bar',
+        data: usageData,
+        itemStyle: {
+          color: '#5470c6',
+        },
       },
-    },
-  ],
-
-  // 系列数据
-  series: [
-    {
-      name: '空间使用量(MB)',
-      type: 'bar',
-      data: usageData,
-      itemStyle: {
-        color: '#5470c6',
-      },
-    },
-  ],
-}
+    ],
+  }
 })
 const onSearch = (value: number) => {
   if(isNaN(Number(value))){

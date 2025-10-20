@@ -51,14 +51,6 @@ const props = withDefaults(defineProps<Props>(), {
 })
 const spaceAnalysisData = ref<API.SpaceTagAnalyzeResponse[]>([])
 
-const showTagData = computed(() => {
-  return spaceAnalysisData.value.map((item) => {
-    return {
-      value: item.count,
-      name: item.tag
-    }
-  })
-})
 /**
  * 获取空间详情
  */
@@ -88,63 +80,71 @@ const getSpaceDetail = async () => {
 }
 
 // 多系列柱状图配置
-const option = computed(() => ({
-  // 系列数据
-  series: [
-    {
-        type: 'wordCloud',
+const option = computed(() => {
+  // 计算标签数据
+  const showTagData = spaceAnalysisData.value.map((item) => ({
+    value: item.count,
+    name: item.tag
+  }))
+  
+  return {
+    // 系列数据
+    series: [
+      {
+          type: 'wordCloud',
 
-        shape: 'circle',
-        keepAspect: false,
+          shape: 'circle',
+          keepAspect: false,
 
-        // maskImage: maskImage,
+          // maskImage: maskImage,
 
-        left: 'center',
-        top: 'center',
-        width: '70%',
-        height: '80%',
-        right: null,
-        bottom: null,
-
-
-        sizeRange: [8, 50],
+          left: 'center',
+          top: 'center',
+          width: '70%',
+          height: '80%',
+          right: null,
+          bottom: null,
 
 
-        rotationRange: [-30, 30],
-        rotationStep: 45,
+          sizeRange: [8, 50],
 
 
-        gridSize: 20,
+          rotationRange: [-30, 30],
+          rotationStep: 45,
 
-        drawOutOfBound: false,
 
-        shrinkToFit: false,
+          gridSize: 20,
 
-        layoutAnimation: true,
+          drawOutOfBound: false,
 
-        textStyle: {
-            fontFamily: 'sans-serif',
-            fontWeight: 'bold',
-            color: function () {
-                return 'rgb(' + [
-                    Math.round(Math.random() * 160),
-                    Math.round(Math.random() * 160),
-                    Math.round(Math.random() * 160)
-                ].join(',') + ')';
-            }
-        },
-        emphasis: {
-            focus: 'self',
-            textStyle: {
-                textShadowBlur: 5,
-                textShadowColor: '#82E1DB'
-            }
-        },
+          shrinkToFit: false,
 
-        data: showTagData.value
+          layoutAnimation: true,
 
- } ],
-}))
+          textStyle: {
+              fontFamily: 'sans-serif',
+              fontWeight: 'bold',
+              color: function () {
+                  return 'rgb(' + [
+                      Math.round(Math.random() * 160),
+                      Math.round(Math.random() * 160),
+                      Math.round(Math.random() * 160)
+                  ].join(',') + ')';
+              }
+          },
+          emphasis: {
+              focus: 'self',
+              textStyle: {
+                  textShadowBlur: 5,
+                  textShadowColor: '#82E1DB'
+              }
+          },
+
+          data: showTagData
+
+   } ],
+  }
+})
 onMounted(() => {
   getSpaceDetail()
 })

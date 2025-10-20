@@ -45,19 +45,6 @@ const props = withDefaults(defineProps<Props>(),{
   queryPublic: false,
 });
 const spaceAnalysisData = ref<API.SpaceSizeAnalyzeResponse[]>([]);
-const dataName = computed(() => {
-  return spaceAnalysisData.value.map(item => {
-    return item.sizeRange;
-  })
-})
-const dataList = computed(() => {
-  return spaceAnalysisData.value.map(item => {
-    return {
-      value: item.count,
-      name: item.sizeRange,
-    }
-  })
-})
 
 /**
  * 获取空间详情
@@ -86,37 +73,48 @@ const getSpaceDetail = async () => {
     console.error(res.data.message)
   }
 }
-const option = computed(() => ({
-  title: {
-    text: '不同图片大小的数量占比',
-    left: 'center',
-  },
-  tooltip: {
-    trigger: 'item',
-    formatter: '{a} <br/>{b} : {c} ({d}%)',
-  },
-  legend: {
-    orient: 'vertical',
-    left: 'left',
-    data: dataName.value,
-  },
-  series: [
-    {
-      name: '空间内存占用',
-      type: 'pie',
-      radius: '55%',
-      center: ['50%', '60%'],
-      data: dataList.value,
-      emphasis: {
-        itemStyle: {
-          shadowBlur: 10,
-          shadowOffsetX: 0,
-          shadowColor: 'rgba(0, 0, 0, 0.5)',
+const option = computed(() => {
+  // 计算分类名称数组
+  const dataName = spaceAnalysisData.value.map(item => item.sizeRange)
+  
+  // 计算数据列表
+  const dataList = spaceAnalysisData.value.map(item => ({
+    value: item.count,
+    name: item.sizeRange,
+  }))
+  
+  return {
+    title: {
+      text: '不同图片大小的数量占比',
+      left: 'center',
+    },
+    tooltip: {
+      trigger: 'item',
+      formatter: '{a} <br/>{b} : {c} ({d}%)',
+    },
+    legend: {
+      orient: 'vertical',
+      left: 'left',
+      data: dataName,
+    },
+    series: [
+      {
+        name: '空间内存占用',
+        type: 'pie',
+        radius: '55%',
+        center: ['50%', '60%'],
+        data: dataList,
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)',
+          },
         },
       },
-    },
-  ],
-}));
+    ],
+  }
+});
 
 onMounted(() => {
   getSpaceDetail();

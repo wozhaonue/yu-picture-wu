@@ -16,7 +16,7 @@
           :class="{ 'sider-expanded': !collapsed }"
         >
           <a-config-provider :locale="zhCN">
-            <router-view></router-view>
+            <router-view :key="route.fullPath"></router-view>
           </a-config-provider>
           <br />
           <!-- 页脚移到内容区域内 -->
@@ -39,10 +39,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRoute } from 'vue-router'
 import BasicHeader from '@/components/BasicHeader.vue'
 import BasicSider from '@/components/BasicSider.vue'
 import zhCN from 'ant-design-vue/es/locale/zh_CN'
 
+const route = useRoute()
 // 侧边栏折叠状态
 const collapsed = ref(true)
 </script>

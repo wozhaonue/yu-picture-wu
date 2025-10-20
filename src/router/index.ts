@@ -135,4 +135,19 @@ const router = createRouter({
   ],
 })
 
+// 全局捕获路由加载错误（如动态导入 chunk 失败），自动刷新重试
+router.onError((error) => {
+  const msg = String(error?.message || '')
+  const isChunkFail =
+    msg.includes('Failed to fetch dynamically imported module') ||
+    msg.includes('ChunkLoadError') ||
+    /dynamic import/i.test(msg)
+
+  if (isChunkFail) {
+    console.warn('动态模块加载失败，准备强制刷新以重试。', error)
+    // 刷新当前页面，重新拉取最新资源
+    window.location.reload()
+  }
+})
+
 export default router

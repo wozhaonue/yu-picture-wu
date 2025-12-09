@@ -36,7 +36,7 @@
         <router-link to="/">
           <div class="title-bar">
             <img src="@images/favicon.ico" alt="网站logo" />
-            <span class="title">智能协同云图库</span>
+            <span class="title">Qra企业活动相册</span>
           </div>
         </router-link>
       </a-col>
@@ -143,8 +143,8 @@ const originalItems = [
   },
   {
     key: '/others',
-    label: h('a', { href: 'https://www.codefather.cn', target: '_blank' }, '编程导航'),
-    title: '编程导航',
+    label: h('a', { href: 'https://github.com/wozhaonue', target: '_blank' }, '前端开源仓库'),
+    title: '前端开源仓库',
   },
 ]
 

@@ -1,6 +1,6 @@
 <template>
   <div id="basicLayout">
-    <a-layout style="min-height: 100vh">
+    <a-layout style="height: 100vh">
       <!-- 固定的头部 -->
       <a-layout-header class="header fixed-header"><BasicHeader></BasicHeader></a-layout-header>
 
@@ -104,7 +104,7 @@ const collapsed = ref(true)
     margin-top: auto;
 
     @include theme-background;
-    
+
     html[data-dark='light'] & {
       border-top: 1px solid #9d9d9d;
     }

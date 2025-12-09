@@ -133,22 +133,6 @@ watchEffect(() => {
 @use '../styles/variable.module' as *;
 @use '../styles/mixins' as *;
 #basic-sider {
-  .title-bar {
-    @include flex-center;
-    gap: $spacing-xs;
-    margin: $spacing-lg;
-
-    img {
-      height: 32px;
-      width: auto;
-    }
-
-    .title {
-      @include theme-text;
-      font-size: $font-size-lg;
-    }
-  }
-
   .sider {
     @include theme-background;
 
